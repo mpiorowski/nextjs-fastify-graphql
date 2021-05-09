@@ -1,0 +1,31 @@
+# Use postgres/example user/password credentials
+version: "3.7"
+
+services:
+  forum-db:
+    container_name: forum-db-dev
+    build:
+      context: ./
+      dockerfile: Dockerfile.db
+    command:
+      [
+        "postgres",
+        "-c",
+        "shared_preload_libraries=pgaudit",
+        "-c",
+        "logging_collector=on",
+        "-c",
+        "log_statement=all",
+        "-c",
+        "log_directory=./log",
+      ]
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: db
+      PGDATA: /data/pgdata
+    volumes:
+      - ./dev:/data/pgdata
+      # - ./migrations/init.sql:/docker-entrypoint-initdb.d/1-schema.sql
+    ports:
+      - "5432:5432"
