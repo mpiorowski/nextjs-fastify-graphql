@@ -1,12 +1,24 @@
-import { REST } from '../../../@common/@enums';
+import { CONFIG, REST } from '../../../@common/@enums';
 import { apiRequest } from '../../../@common/apiRequest';
 import { Category, Post, Topic } from './forumTypes';
+import { request, gql } from 'graphql-request';
+import { useQuery } from 'react-query';
 
-export const apiFindAllCategories = () => {
-  return apiRequest<Category[]>({
-    url: 'http://localhost:3000/api/categories',
-    method: REST.GET,
-  });
+export function useCategories() {
+  return useQuery('categories', apiFindAllCategories);
+}
+export const apiFindAllCategories = (): Promise<{ categories: Category[] }> => {
+  return request(
+    CONFIG.API_URL,
+    gql`
+      query {
+        categories {
+          title
+          description
+        }
+      }
+    `
+  );
 };
 
 export const apiFindCategoryById = (catergoryId: string | string[]) => {
@@ -17,11 +29,19 @@ export const apiFindCategoryById = (catergoryId: string | string[]) => {
 };
 
 export const apiAddCategory = (category: Category) => {
-  return apiRequest<Category>({
-    url: 'http://localhost:3000/api/categories',
-    method: REST.POST,
-    body: JSON.stringify(category),
-  });
+  const variables = {
+    title: category.title,
+    description: category.description,
+  };
+  const query = gql`
+    mutation createCategory($title: String, $description: String) {
+      createCategory(title: $title, description: $description) {
+        title
+        description
+      }
+    }
+  `;
+  return request(CONFIG.API_URL, query, variables);
 };
 
 export const apiFindAllTopics = (catergoryId: string | string[]) => {

@@ -6,3 +6,7 @@ export enum REST {
   DELETE = 'DELETE',
   OPTION = 'OPTION',
 }
+
+export enum CONFIG {
+  API_URL = 'http://localhost:3000/api',
+}

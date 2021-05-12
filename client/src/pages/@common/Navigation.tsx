@@ -1,8 +1,12 @@
+import { Box, Grid } from '@chakra-ui/layout';
+import { Center } from '@chakra-ui/react';
+import { faComments, faHome } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSession } from 'next-auth/client';
-import { useRouter } from 'next/dist/client/router';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
-import { LoadingPage } from '../../components/@common/LoadingPage';
+import { LoadingPage } from './LoadingPage';
 
 type Props = {
   children?: ReactElement | ReactElement[];
@@ -20,22 +24,22 @@ export const Navigation = ({ children }: Props) => {
     return <LoadingPage></LoadingPage>;
   }
 
-  return <div>Navigation</div>;
-
-  // return (
-  //   <Layout className="h-screen">
-  //     <Layout.Sider collapsed={true}>
-  //       <Menu theme="dark" mode="horizontal" selectedKeys={['/' + router.pathname.split('/')[1]]}>
-  //         <Menu.Item key="/">
-  //           <Link href="/">home</Link>
-  //         </Menu.Item>
-  //         <Menu.Item key="/forum">
-  //           <Link href="/forum/categories">forum</Link>
-  //         </Menu.Item>
-  //       </Menu>
-  //     </Layout.Sider>
-  //     <Layout.Content style={{ padding: '0 50px' }}>{children}</Layout.Content>
-  //     <Layout.Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Layout.Footer>
-  //   </Layout>
-  // );
+  const activeUrl = router.pathname.split('/')[1];
+  return (
+    <Grid gridTemplateColumns="60px 1fr" h="100vh">
+      <Box backgroundColor="gray.900">
+        <Link href="/home">
+          <Center h="40px" _hover={{ color: 'gray.400', cursor: 'pointer' }} m="2" borderRadius="4" backgroundColor={activeUrl === 'home' && 'gray.600'}>
+            <FontAwesomeIcon icon={faHome} size="lg" />
+          </Center>
+        </Link>
+        <Link href="/forum/categories">
+          <Center h="40px" _hover={{ color: 'gray.400', cursor: 'pointer' }} m="2" borderRadius="4" backgroundColor={activeUrl === 'forum' && 'gray.600'}>
+            <FontAwesomeIcon icon={faComments} size="lg" />
+          </Center>
+        </Link>
+      </Box>
+      <Box>{children}</Box>
+    </Grid>
+  );
 };

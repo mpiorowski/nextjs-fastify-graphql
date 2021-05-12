@@ -1,3 +1,11 @@
 module.exports = {
-  pageExtensions: ["page.tsx", "api.ts"],
-}
+  async rewrites() {
+    return [
+      {
+        source: '/api',
+        destination: 'http://localhost:4000/graphql',
+      },
+    ];
+  },
+  pageExtensions: ['page.tsx', 'api.ts']
+};

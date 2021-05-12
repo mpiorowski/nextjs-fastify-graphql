@@ -1,11 +1,20 @@
+import { useSession } from 'next-auth/client';
+import { useRouter } from 'next/router';
 import React from 'react';
-import Home from '../components/home/Home.client';
-import { Navigation } from './@common/Navigation';
+import { LoadingPage } from './@common/LoadingPage';
 
 export default function Pages() {
-  return (
-    <Navigation>
-      <div>HOME</div>
-    </Navigation>
-  );
+  const [session, loading] = useSession();
+  const router = useRouter();
+
+  if (loading) {
+    return <LoadingPage></LoadingPage>;
+  }
+  if (!session) {
+    router.push('/api/auth/signin');
+    return <LoadingPage></LoadingPage>;
+  }
+
+  router.push('/forum/categories');
+  return <div></div>;
 }
