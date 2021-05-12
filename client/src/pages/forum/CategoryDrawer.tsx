@@ -1,5 +1,6 @@
-import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, Input, useDisclosure } from '@chakra-ui/react';
+import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, FormControl, FormErrorMessage, FormLabel, Input, Textarea } from '@chakra-ui/react';
 import React from 'react';
+import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
 import { apiAddCategory } from './@common/forumApis';
 import { Category } from './@common/forumTypes';
@@ -12,14 +13,18 @@ interface Props {
 
 export const CategoryDrawer = ({ btnRef, isOpen, onClose }: Props) => {
   const cache = useQueryClient();
-  // const [form] = Form.useForm();
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isSubmitting },
+  } = useForm();
 
   const addCategory = useMutation((category: Category) => apiAddCategory(category));
-  const onSubmit = async () => {
+  const onSubmit = async (values) => {
     try {
-      // const values = await form.validateFields();
-      // await addCategory.mutateAsync(values);
+      await addCategory.mutateAsync(values);
       cache.refetchQueries('categories');
+      onClose();
     } catch (error) {
       console.error(error);
     }
@@ -28,22 +33,35 @@ export const CategoryDrawer = ({ btnRef, isOpen, onClose }: Props) => {
   return (
     <>
       <Drawer isOpen={isOpen} placement="right" onClose={onClose} finalFocusRef={btnRef} size="md">
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerCloseButton />
-          <DrawerHeader>Dodaj kategorię</DrawerHeader>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <DrawerOverlay />
+          <DrawerContent>
+            <DrawerCloseButton />
+            <DrawerHeader>Dodaj kategorię</DrawerHeader>
 
-          <DrawerBody>
-            <Input placeholder="Type here..." />
-          </DrawerBody>
+            <DrawerBody>
+              <FormControl isInvalid={errors.title} h="120">
+                <FormLabel htmlFor="title">Tytuł</FormLabel>
+                <Input title="title" placeholder="Tytuł" {...register('title', { required: 'Pole nie może być puste' })} />
+                <FormErrorMessage>{errors.title && errors.title.message}</FormErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={errors.description} h="120">
+                <FormLabel htmlFor="description">Opis</FormLabel>
+                <Textarea description="description" rows={5} placeholder="Tytuł" {...register('description', { required: 'Pole nie może być puste' })} />
+                <FormErrorMessage>{errors.description && errors.description.message}</FormErrorMessage>
+              </FormControl>
+            </DrawerBody>
 
-          <DrawerFooter>
-            <Button variant="outline" mr={3} onClick={onClose}>
-              Cancel
-            </Button>
-            <Button colorScheme="green">Save</Button>
-          </DrawerFooter>
-        </DrawerContent>
+            <DrawerFooter>
+              <Button variant="outline" mr={3} onClick={onClose}>
+                Cancel
+              </Button>
+              <Button colorScheme="green" type="submit" isLoading={isSubmitting}>
+                Save
+              </Button>
+            </DrawerFooter>
+          </DrawerContent>
+        </form>
       </Drawer>
     </>
   );
