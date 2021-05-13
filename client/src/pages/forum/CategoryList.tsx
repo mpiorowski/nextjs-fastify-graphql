@@ -1,11 +1,9 @@
-import { Center, Grid, GridItem, WrapItem } from '@chakra-ui/layout';
-import { Box, Button, Flex, HStack, Stack, useDisclosure, Wrap } from '@chakra-ui/react';
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { faComment, faPenAlt, fas } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react';
+import { Grid } from '@chakra-ui/layout';
+import { Box, Button, Flex, Link as UiLink, useDisclosure } from '@chakra-ui/react';
+import React from 'react';
 import { useCategories } from './@common/forumApis';
 import { CategoryDrawer } from './CategoryDrawer';
+import Link from 'next/link';
 
 export const CategoryList = () => {
   const { data } = useCategories();
@@ -18,7 +16,26 @@ export const CategoryList = () => {
 
   return (
     <Box>
-      <Grid templateColumns="200px 1fr" h="100vh">
+      <Flex justifyContent="right" p="5">
+        <Button ref={btnRef} onClick={onOpen} w="200px">
+          Dodaj kategorię
+        </Button>
+      </Flex>
+      <Grid maxWidth="1000px" margin="auto" rowGap="0.5" paddingTop="0.5" paddingBottom="0.5" justifyContent="stretch" background="gray.500">
+        {data.categories.map((category) => (
+          <Grid h="100px" background="gray.800" alignContent="center" key={category.id}>
+            <Link href={`/forum/categories/${category.id}/topics`}>
+              <UiLink fontSize="xl" color="green.400">
+                {category.title}
+              </UiLink>
+            </Link>
+            <Box fontSize="sm" color="gray.300">
+              {category.description}
+            </Box>
+          </Grid>
+        ))}
+      </Grid>
+      {/* <Grid templateColumns="200px 1fr" h="100vh">
         <Box backgroundColor="gray.700">
           <Box p="4">
             <Button ref={btnRef} onClick={onOpen} w="100%">
@@ -40,11 +57,11 @@ export const CategoryList = () => {
               </Box>
             ))}
           </Grid>
-          {/* <Flex fontSize="26" alignItems="center">
+          <Flex fontSize="26" alignItems="center">
             Kategorie
-          </Flex> */}
+          </Flex>
         </Box>
-      </Grid>
+      </Grid> */}
       <CategoryDrawer btnRef={btnRef} isOpen={isOpen} onClose={onClose}></CategoryDrawer>
     </Box>
   );

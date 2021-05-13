@@ -4,13 +4,12 @@ import { QueryClient } from 'react-query';
 import { dehydrate } from 'react-query/hydration';
 import { TopicsList } from '../../../../components/forum/topics/TopicsList';
 import { Navigation } from '../../../@common/Navigation';
-import { dbGetAllCategories } from '../../../api/categories.api';
-import { apiFindAllTopics, apiFindCategoryById } from '../../@common/forumApis';
+import { apiFindAllCategories, apiFindCategoryById } from '../../@common/forumApis';
 
 export async function getStaticPaths() {
-  const categories = await dbGetAllCategories();
-  const paths = categories.map((category) => ({
-    params: { categoryId: category.uid },
+  const data = await apiFindAllCategories();
+  const paths = data.categories.map((category) => ({
+    params: { categoryId: category.id },
   }));
 
   // { fallback: false } means other routes should 404.
@@ -20,7 +19,6 @@ export async function getStaticPaths() {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { categoryId } = params as { categoryId: string };
   const queryClient = new QueryClient();
-  await queryClient.prefetchQuery(['topics', categoryId], () => apiFindAllTopics(categoryId));
   await queryClient.prefetchQuery(['category', categoryId], () => apiFindCategoryById(categoryId));
   return {
     props: {

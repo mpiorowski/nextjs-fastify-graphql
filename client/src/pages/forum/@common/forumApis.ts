@@ -13,6 +13,7 @@ export const apiFindAllCategories = (): Promise<{ categories: Category[] }> => {
     gql`
       query {
         categories {
+          id
           title
           description
         }
@@ -21,11 +22,26 @@ export const apiFindAllCategories = (): Promise<{ categories: Category[] }> => {
   );
 };
 
-export const apiFindCategoryById = (catergoryId: string | string[]) => {
-  return apiRequest<Category>({
-    url: 'http://localhost:3000/api/categories/' + catergoryId,
-    method: REST.GET,
-  });
+export const apiFindCategoryById = (catergoryId: string) => {
+  const variables = {
+    catergoryId: String(catergoryId),
+  };
+  const query = gql`
+    query category($catergoryId: String) {
+      category(id: $catergoryId) {
+        id
+        title
+        description
+        topics {
+          id
+          title
+          description
+        }
+      }
+    }
+  `;
+
+  return request(CONFIG.API_URL, query, variables);
 };
 
 export const apiAddCategory = (category: Category) => {
