@@ -1,8 +1,8 @@
 import { Box, Grid } from '@chakra-ui/layout';
 import { Center } from '@chakra-ui/react';
-import { faComments, faHome } from '@fortawesome/free-solid-svg-icons';
+import { faComments, faHome, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useSession } from 'next-auth/client';
+import { signOut, useSession } from 'next-auth/client';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
@@ -38,6 +38,9 @@ export const Navigation = ({ children }: Props) => {
             <FontAwesomeIcon icon={faComments} size="lg" />
           </Center>
         </Link>
+        <Center h="40px" _hover={{ color: 'gray.400', cursor: 'pointer' }} m="2" borderRadius="4" onClick={() => signOut()}>
+          <FontAwesomeIcon icon={faSignOutAlt} size="lg" />
+        </Center>
       </Box>
       <Box>{children}</Box>
     </Grid>

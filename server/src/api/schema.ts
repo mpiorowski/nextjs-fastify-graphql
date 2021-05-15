@@ -21,5 +21,13 @@ export const schema = `
     id: String
     title: String
     description: String
+    postsCount: Int
+    posts: [Post]
+  }
+
+  type Post {
+    id: String
+    content: String
+    reply: Post
   }
   `;

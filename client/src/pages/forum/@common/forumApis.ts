@@ -36,6 +36,7 @@ export const apiFindCategoryById = (catergoryId: string) => {
           id
           title
           description
+          postsCount
         }
       }
     }

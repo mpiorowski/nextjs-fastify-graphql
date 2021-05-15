@@ -24,23 +24,15 @@ export async function getCategoryById(categoryId: string) {
     await client.query('BEGIN');
     let queryText = `select * from forum_categories where id = ${categoryId}`;
     let res = await client.query(queryText);
-    await client.query('COMMIT');
-    // console.log(res.rows[0]);
-    // return res.rows[0];
     const category = res.rows[0];
-
-    console.log(category);
-
-    queryText = `select * from forum_topics where categoryid = ${categoryId}`;
+    queryText = `select ft.*, (select count(*) from forum_posts fp where fp.topicid = ft.id) as "postsCount" from forum_topics ft where ft.categoryid = ${categoryId}`;
     res = await client.query(queryText);
-    await client.query('COMMIT');
-
     const topics = res.rows;
-
     const response = {
       ...category,
       topics: topics,
     };
+    await client.query('COMMIT');
     return response;
   } catch (e) {
     await client.query('ROLLBACK');
@@ -58,7 +50,6 @@ export async function addCategory(categoryData: any) {
     const queryText = `insert into forum_categories(title, description, icon, userid) values('${categoryData.title}', '${categoryData.description}', 'icon', 1) returning *`;
     console.log(queryText);
     const res = await client.query(queryText);
-    await client.query('COMMIT');
     console.log(res.rows);
     return res.rows[0];
   } catch (e) {

@@ -18,6 +18,7 @@ export type Topic = {
   uid?: string;
   title: string;
   description?: string;
+  postsCount: number;
   views: string;
   categoryid: string;
   userid: string;
