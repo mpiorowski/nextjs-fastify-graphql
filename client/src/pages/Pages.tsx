@@ -4,7 +4,8 @@ import { faComments, faHome, faSignOutAlt } from '@fortawesome/free-solid-svg-ic
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement } from 'react';
+import { useQuery } from 'react-query';
 import { apiRequest } from '../@common/@apiRequest';
 import { REST } from '../@common/@enums';
 import { LoadingPage } from './@common/LoadingPage';
@@ -13,7 +14,7 @@ type Props = {
   children?: ReactElement | ReactElement[];
 };
 
-export function user() {
+export function findActiveUser() {
   return apiRequest<{ name: string }>({
     url: 'http://localhost:3000/auth/user',
     method: REST.GET,
@@ -29,29 +30,21 @@ export function logout() {
 
 export const Pages = ({ children }: Props) => {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    user()
-      .then((response) => {
-        if (response.name && response.name === 'mat') {
-          setLoading(false);
-        } else {
-          router.push('/login');
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        router.push('/login');
-      });
-  }, []);
+
+  const { data, isLoading } = useQuery('activeUser', findActiveUser);
+
+  if (isLoading) {
+    return <LoadingPage></LoadingPage>;
+  }
+
+  if (!data?.name) {
+    router.push('/login');
+    return <LoadingPage></LoadingPage>;
+  }
 
   async function handleLogout() {
     await logout();
     router.push('/login');
-  }
-
-  if (loading) {
-    return <LoadingPage></LoadingPage>;
   }
 
   const activeUrl = router.pathname.split('/')[1];

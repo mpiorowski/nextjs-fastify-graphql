@@ -4,8 +4,10 @@ import { Category, Post, Topic } from './forumTypes';
 import { request, gql } from 'graphql-request';
 import { useQuery } from 'react-query';
 
-export function useCategories() {
-  return useQuery('categories', apiFindAllCategories);
+export function useFindAllCategories() {
+  const { data, isLoading, isError } = useQuery('categories', apiFindAllCategories);
+  const categoryData = data?.categories || [];
+  return { categoryData, isLoading, isError };
 }
 export const apiFindAllCategories = (): Promise<{ categories: Category[] }> => {
   return request(

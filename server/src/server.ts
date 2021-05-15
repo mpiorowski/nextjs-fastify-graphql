@@ -48,7 +48,7 @@ app.post('/auth/login', async (_request, reply) => {
       sameSite: true, // alternative CSRF protection
     })
     .code(200)
-    .send({ data: true });
+    .send({ data: token });
 });
 
 app.post('/auth/logout', async (_request, reply) => {
@@ -74,16 +74,15 @@ app.get(
   }
 );
 
-app.register(mercurius, {
-  schema: schema,
-  resolvers: resolvers,
-  graphiql: true,
-});
-
 app.addHook('onRoute', (routeOptions) => {
   if (routeOptions.url === '/graphql') {
     routeOptions.preValidation = [app.authenticate];
   }
+});
+app.register(mercurius, {
+  schema: schema,
+  resolvers: resolvers,
+  graphiql: true,
 });
 
 // Run the server!
