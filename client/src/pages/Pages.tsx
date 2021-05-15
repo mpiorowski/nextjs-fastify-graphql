@@ -2,34 +2,57 @@ import { Box, Grid } from '@chakra-ui/layout';
 import { Center } from '@chakra-ui/react';
 import { faComments, faHome, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { signOut, useSession } from 'next-auth/client';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
-import { LoadingPage } from './LoadingPage';
+import { useQuery } from 'react-query';
+import { apiRequest } from '../@common/@apiRequest';
+import { REST } from '../@common/@enums';
+import { LoadingPage } from './@common/LoadingPage';
 
 type Props = {
   children?: ReactElement | ReactElement[];
 };
 
-export const Navigation = ({ children }: Props) => {
-  const [session, loading] = useSession();
+export function findActiveUser() {
+  return apiRequest<{ name: string }>({
+    url: 'http://localhost:3000/auth/user',
+    method: REST.GET,
+  });
+}
+
+export function logout() {
+  return apiRequest<{ name: string }>({
+    url: 'http://localhost:3000/auth/logout',
+    method: REST.POST,
+  });
+}
+
+export const Pages = ({ children }: Props) => {
   const router = useRouter();
 
-  if (loading) {
+  const { data, isLoading } = useQuery('activeUser', findActiveUser);
+
+  if (isLoading) {
     return <LoadingPage></LoadingPage>;
   }
-  if (!session) {
-    router.push('/api/auth/signin');
+
+  if (!data?.name) {
+    router.push('/login');
     return <LoadingPage></LoadingPage>;
+  }
+
+  async function handleLogout() {
+    await logout();
+    router.push('/login');
   }
 
   const activeUrl = router.pathname.split('/')[1];
   return (
     <Grid gridTemplateColumns="60px 1fr" h="100vh">
       <Box backgroundColor="gray.900">
-        <Link href="/home">
-          <Center h="40px" _hover={{ color: 'gray.400', cursor: 'pointer' }} m="2" borderRadius="4" backgroundColor={activeUrl === 'home' && 'gray.600'}>
+        <Link href="/">
+          <Center h="40px" _hover={{ color: 'gray.400', cursor: 'pointer' }} m="2" borderRadius="4" backgroundColor={activeUrl === '' && 'gray.600'}>
             <FontAwesomeIcon icon={faHome} size="lg" />
           </Center>
         </Link>
@@ -38,7 +61,7 @@ export const Navigation = ({ children }: Props) => {
             <FontAwesomeIcon icon={faComments} size="lg" />
           </Center>
         </Link>
-        <Center h="40px" _hover={{ color: 'gray.400', cursor: 'pointer' }} m="2" borderRadius="4" onClick={() => signOut()}>
+        <Center h="40px" _hover={{ color: 'gray.400', cursor: 'pointer' }} m="2" borderRadius="4" onClick={handleLogout}>
           <FontAwesomeIcon icon={faSignOutAlt} size="lg" />
         </Center>
       </Box>

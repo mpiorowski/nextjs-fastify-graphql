@@ -42,7 +42,7 @@ export const TopicsList = () => {
     ],
     []
   );
-  const data = React.useMemo(() => [...categoryData.category.topics], []);
+  const data = React.useMemo(() => (categoryData ? [...categoryData.category.topics] : []), [categoryData]);
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data }, useSortBy);
 
   return (

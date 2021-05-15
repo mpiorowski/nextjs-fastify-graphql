@@ -3,7 +3,7 @@ import TextArea from "antd/lib/input/TextArea";
 import React from "react";
 import { useMutation } from "react-query";
 import { useQueryClient } from "react-query";
-import { apiRequest } from "../../../@common/apiRequest";
+import { apiRequest } from "../../../@common/@apiRequest";
 import { Topic } from "../../../pages/forum/@common/forumTypes";
 
 const layout = {
