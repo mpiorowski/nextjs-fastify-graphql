@@ -19,14 +19,21 @@ app.register(fastifyJWT, {
   },
   trusted: validateToken,
 });
-
 async function validateToken(_request: FastifyRequest, decodedToken: any) {
   // todo - finish blacklisting
   const denylist = ['token1', 'token2'];
   return !denylist.includes(decodedToken.name);
 }
 
-app.post('/signup', async (_request, reply) => {
+app.decorate('authenticate', async function (request: FastifyRequest, reply: FastifyReply) {
+  try {
+    await request.jwtVerify();
+  } catch (err) {
+    reply.send(err);
+  }
+});
+
+app.post('/auth/login', async (_request, reply) => {
   const token = await reply.jwtSign({
     name: 'mat',
     role: ['admin', 'user'],
@@ -41,27 +48,24 @@ app.post('/signup', async (_request, reply) => {
       sameSite: true, // alternative CSRF protection
     })
     .code(200)
-    .send('Cookie sent');
+    .send({ data: true });
 });
 
-app.decorate('authenticate', async function (request: FastifyRequest, reply: FastifyReply) {
-  try {
-    await request.jwtVerify();
-  } catch (err) {
-    reply.send(err);
-  }
+app.post('/auth/logout', async (_request, reply) => {
+  reply
+    .setCookie('token', '', {
+      domain: 'localhost',
+      path: '/',
+      secure: false, // send cookie over HTTPS only
+      httpOnly: true,
+      sameSite: true, // alternative CSRF protection
+    })
+    .code(200)
+    .send({ data: true });
 });
-
-// app.addHook('onRequest', async (request, reply) => {
-//   try {
-//     await request.jwtVerify();
-//   } catch (err) {
-//     reply.send(err);
-//   }
-// });
 
 app.get(
-  '/',
+  '/auth/user',
   {
     preValidation: [app.authenticate],
   },
@@ -74,6 +78,12 @@ app.register(mercurius, {
   schema: schema,
   resolvers: resolvers,
   graphiql: true,
+});
+
+app.addHook('onRoute', (routeOptions) => {
+  if (routeOptions.url === '/graphql') {
+    routeOptions.preValidation = [app.authenticate];
+  }
 });
 
 // Run the server!

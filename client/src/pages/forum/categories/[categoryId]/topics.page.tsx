@@ -3,7 +3,7 @@ import React from 'react';
 import { QueryClient } from 'react-query';
 import { dehydrate } from 'react-query/hydration';
 import { TopicsList } from '../../../../components/forum/topics/TopicsList';
-import { Navigation } from '../../../@common/Navigation';
+import { Pages } from '../../../Pages';
 import { apiFindAllCategories, apiFindCategoryById } from '../../@common/forumApis';
 
 export async function getStaticPaths() {
@@ -29,9 +29,9 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
 export const Topics = () => {
   return (
-    <Navigation>
+    <Pages>
       <TopicsList></TopicsList>
-    </Navigation>
+    </Pages>
   );
 };
 

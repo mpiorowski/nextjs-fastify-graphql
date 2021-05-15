@@ -1,5 +1,5 @@
 import { CONFIG, REST } from '../../../@common/@enums';
-import { apiRequest } from '../../../@common/apiRequest';
+import { apiRequest } from '../../../@common/@apiRequest';
 import { Category, Post, Topic } from './forumTypes';
 import { request, gql } from 'graphql-request';
 import { useQuery } from 'react-query';

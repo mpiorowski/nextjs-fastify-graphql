@@ -22,8 +22,6 @@
     "framer-motion": "^4",
     "graphql": "^15.5.0",
     "graphql-request": "^3.4.0",
-    "next-auth": "^3.20.1",
-    "next-http-proxy-middleware": "^1.0.10",
     "next@canary": "10.2.0",
     "pg": "^8.6.0",
     "react": "17.0.2",

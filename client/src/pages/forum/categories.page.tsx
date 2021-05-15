@@ -2,9 +2,9 @@ import { GetStaticProps } from 'next';
 import React from 'react';
 import { QueryClient } from 'react-query';
 import { dehydrate } from 'react-query/hydration';
+import { Pages } from '../Pages';
 import { apiFindAllCategories } from './@common/forumApis';
 import { CategoryList } from './CategoryList';
-import { Navigation } from '../@common/Navigation';
 
 export const getStaticProps: GetStaticProps = async () => {
   const queryClient = new QueryClient();
@@ -18,8 +18,8 @@ export const getStaticProps: GetStaticProps = async () => {
 
 export default function Categories() {
   return (
-    <Navigation>
+    <Pages>
       <CategoryList></CategoryList>
-    </Navigation>
+    </Pages>
   );
 }
