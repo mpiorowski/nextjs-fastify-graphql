@@ -2,8 +2,9 @@ import Fastify, { FastifyReply, FastifyRequest } from 'fastify';
 import fastifyCookie from 'fastify-cookie';
 import fastifyJWT from 'fastify-jwt';
 import mercurius from 'mercurius';
-import { resolvers } from './api/resolvers';
-import { schema } from './api/schema';
+import authRoutes from './auth/auth.routes';
+import { resolvers } from './resolvers';
+import { schema } from './schema';
 
 require('dotenv').config();
 
@@ -11,6 +12,7 @@ const app = Fastify({
   logger: true,
 });
 
+// jwt auth
 app.register(fastifyCookie);
 app.register(fastifyJWT, {
   secret: 'supersecret',
@@ -25,6 +27,7 @@ async function validateToken(_request: FastifyRequest, decodedToken: any) {
   return !denylist.includes(decodedToken.name);
 }
 
+// auth hook
 app.decorate('authenticate', async function (request: FastifyRequest, reply: FastifyReply) {
   try {
     await request.jwtVerify();
@@ -33,47 +36,7 @@ app.decorate('authenticate', async function (request: FastifyRequest, reply: Fas
   }
 });
 
-app.post('/auth/login', async (_request, reply) => {
-  const token = await reply.jwtSign({
-    name: 'mat',
-    role: ['admin', 'user'],
-  });
-
-  reply
-    .setCookie('token', token, {
-      domain: 'localhost',
-      path: '/',
-      secure: false, // send cookie over HTTPS only
-      httpOnly: true,
-      sameSite: true, // alternative CSRF protection
-    })
-    .code(200)
-    .send({ data: token });
-});
-
-app.post('/auth/logout', async (_request, reply) => {
-  reply
-    .setCookie('token', '', {
-      domain: 'localhost',
-      path: '/',
-      secure: false, // send cookie over HTTPS only
-      httpOnly: true,
-      sameSite: true, // alternative CSRF protection
-    })
-    .code(200)
-    .send({ data: true });
-});
-
-app.get(
-  '/auth/user',
-  {
-    preValidation: [app.authenticate],
-  },
-  async function (request, _reply) {
-    return request.user;
-  }
-);
-
+// graphql
 app.addHook('onRoute', (routeOptions) => {
   if (routeOptions.url === '/graphql') {
     routeOptions.preValidation = [app.authenticate];
@@ -84,6 +47,9 @@ app.register(mercurius, {
   resolvers: resolvers,
   graphiql: true,
 });
+
+// routes
+authRoutes(app);
 
 // Run the server!
 const start = async () => {

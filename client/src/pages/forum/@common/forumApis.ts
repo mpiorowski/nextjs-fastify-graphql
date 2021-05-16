@@ -1,124 +1,79 @@
-import { gql, request } from 'graphql-request';
 import { useQuery } from 'react-query';
+import { apiRequest } from '../../../@common/@apiRequest';
 import { CONFIG } from '../../../@common/@enums';
 import { Category, Post, Topic } from './forumTypes';
 
+const apiFindAllCategories = (): Promise<{ data: { categories: Category[] } }> => {
+  const query = `query { categories { id title description } }`;
+  return apiRequest({ url: `${CONFIG.API_URL}?query=${query}`, method: 'GET' });
+};
 export function useFindAllCategories() {
   const { data, isLoading, isError } = useQuery('categories', apiFindAllCategories);
-  const categoryData = data?.categories || [];
+  const categoryData = data?.data.categories || [];
   return { categoryData, isLoading, isError };
 }
-export const apiFindAllCategories = (): Promise<{ categories: Category[] }> => {
-  return request(
-    CONFIG.API_URL,
-    gql`
-      query {
-        categories {
-          id
-          title
-          description
-        }
-      }
-    `
-  );
-};
 
+const apiFindCategoryById = (categoryId: string): Promise<{ data: { category: Category } }> => {
+  const query = `query { category(id: "${categoryId}") { id title description topics { id title description postsCount} } }`;
+  return apiRequest({ url: `${CONFIG.API_URL}?query=${query}`, method: 'GET' });
+};
 export function useFindCategoryById(categoryId: string) {
   const { data, isLoading, isError } = useQuery(['category', categoryId], () => apiFindCategoryById(categoryId), { enabled: !!categoryId });
-  const categoryData = data?.category || null;
+  const categoryData = data?.data.category || null;
   return { categoryData, isLoading, isError };
 }
-export const apiFindCategoryById = (categoryId: string): Promise<{ category: Category }> => {
-  const variables = {
-    categoryId: String(categoryId),
-  };
-  const query = gql`
-    query category($categoryId: String) {
-      category(id: $categoryId) {
-        id
-        title
-        description
-        topics {
-          id
-          title
-          description
-          postsCount
-        }
-      }
-    }
-  `;
-  return request(CONFIG.API_URL, query, variables);
-};
 
 export const apiAddCategory = (category: Category) => {
-  const variables = {
-    title: category.title,
-    description: category.description,
-  };
-  const query = gql`
-    mutation createCategory($title: String, $description: String) {
-      createCategory(title: $title, description: $description) {
-        title
-        description
-      }
+  const query = `
+  mutation {
+    createCategory(title: "${category.title}", description: "${category.description}") {
+      title, description, id
     }
+  }
   `;
-  return request(CONFIG.API_URL, query, variables);
+  return apiRequest({ url: `${CONFIG.API_URL}`, method: 'POST', body: JSON.stringify({ query: query }) });
 };
 
-export function useFindTopicById(topicId: string) {
-  const { data, isLoading, isError } = useQuery(['topic', topicId], () => apiFindTopicyById(topicId), { enabled: !!topicId });
-  const topicData = data?.topic;
-  return { topicData, isLoading, isError };
-}
-export const apiFindTopicyById = (topicId: string): Promise<{ topic: Topic }> => {
-  const variables = {
-    topicId: String(topicId),
-  };
-  const query = gql`
-    query topic($topicId: String) {
-      topic(id: $topicId) {
+const apiFindTopicyById = (topicId: string): Promise<{ data: { topic: Topic } }> => {
+  const query = `
+  query {
+    topic(id: "${topicId}") {
+      id
+      title
+      description
+      posts {
         id
-        title
-        description
-        posts {
-          id
-          content
-        }
-      }
-    }
-  `;
-  return request(CONFIG.API_URL, query, variables);
-};
-
-export const apiAddTopic = (topic: Topic) => {
-  const variables = {
-    categoryId: topic.categoryId,
-    title: topic.title,
-    description: topic.description,
-  };
-  const query = gql`
-    mutation createTopic($categoryId: String, $title: String, $description: String) {
-      createTopic(categoryId: $categoryId, title: $title, description: $description) {
-        title
-        description
-      }
-    }
-  `;
-  return request(CONFIG.API_URL, query, variables);
-};
-
-export const apiAddPost = (post: Post) => {
-  const variables = {
-    topicId: post.topicId,
-    content: post.content,
-  };
-  const query = gql`
-    mutation createPost($topicId: String, $content: String) {
-      createPost(topicId: $topicId, content: $content) {
         content
       }
     }
+  }
   `;
-  return request(CONFIG.API_URL, query, variables);
+  return apiRequest({ url: `${CONFIG.API_URL}?query=${query}`, method: 'GET' });
+};
+export function useFindTopicById(topicId: string) {
+  const { data, isLoading, isError } = useQuery(['topic', topicId], () => apiFindTopicyById(topicId), { enabled: !!topicId });
+  const topicData = data?.data.topic;
+  return { topicData, isLoading, isError };
+}
+
+export const apiAddTopic = (topic: Topic) => {
+  const query = `
+  mutation {
+    createTopic(categoryId: "${topic.categoryId}", title: "${topic.title}", description: "${topic.description}") {
+      title, description, id
+    }
+  }
+  `;
+  return apiRequest({ url: `${CONFIG.API_URL}`, method: 'POST', body: JSON.stringify({ query: query }) });
+};
+
+export const apiAddPost = (post: Post) => {
+  const query = `
+  mutation {
+    createPost(topicId: "${post.topicId}", content: "${post.content}") {
+      content, id
+    }
+  }
+  `;
+  return apiRequest({ url: `${CONFIG.API_URL}`, method: 'POST', body: JSON.stringify({ query: query }) });
 };

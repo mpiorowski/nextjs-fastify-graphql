@@ -2,13 +2,14 @@ import { Button } from 'antd';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { apiRequest } from '../@common/@apiRequest';
-import { REST } from '../@common/@enums';
 import { LoadingPage } from './@common/LoadingPage';
 
+// TODO - finish login
 function signIn() {
   return apiRequest<{ name: string }>({
     url: 'http://localhost:3000/auth/login',
-    method: REST.POST,
+    method: 'POST',
+    body: JSON.stringify({}),
   });
 }
 

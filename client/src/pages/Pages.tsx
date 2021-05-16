@@ -7,7 +7,6 @@ import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
 import { useQuery } from 'react-query';
 import { apiRequest } from '../@common/@apiRequest';
-import { REST } from '../@common/@enums';
 import { LoadingPage } from './@common/LoadingPage';
 
 type Props = {
@@ -17,14 +16,15 @@ type Props = {
 export function findActiveUser() {
   return apiRequest<{ name: string }>({
     url: 'http://localhost:3000/auth/user',
-    method: REST.GET,
+    method: 'GET',
   });
 }
 
 export function logout() {
   return apiRequest<{ name: string }>({
     url: 'http://localhost:3000/auth/logout',
-    method: REST.POST,
+    method: 'POST',
+    body: JSON.stringify({}),
   });
 }
 

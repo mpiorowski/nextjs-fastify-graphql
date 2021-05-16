@@ -1,3 +1,4 @@
+import { MercuriusContext } from 'mercurius';
 import { Pool } from 'pg';
 
 export async function getAllCategories() {
@@ -42,12 +43,13 @@ export async function getCategoryById(categoryId: string) {
   }
 }
 
-export async function addCategory(categoryData: any) {
+export async function addCategory(categoryData: any, context: MercuriusContext) {
+  const user = context.reply.request.user as { id: string };
   const pool = new Pool();
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    const queryText = `insert into forum_categories(title, description, icon, userId) values('${categoryData.title}', '${categoryData.description}', 'icon', 1) returning *`;
+    const queryText = `insert into forum_categories(title, description, icon, userId) values('${categoryData.title}', '${categoryData.description}', 'icon', ${user.id}) returning *`;
     console.log(queryText);
     const res = await client.query(queryText);
     await client.query('COMMIT');

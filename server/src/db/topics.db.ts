@@ -1,3 +1,4 @@
+import { MercuriusContext } from 'mercurius';
 import { Pool } from 'pg';
 
 export async function getAllTopicsByCategoryId(postData: any) {
@@ -49,12 +50,13 @@ export async function getTopicById(topicId: string) {
   }
 }
 
-export async function addTopic(postData: any) {
+export async function addTopic(postData: any, context: MercuriusContext) {
+  const user = context.reply.request.user as { id: string };
   const pool = new Pool();
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    const queryText = `insert into forum_topics(title, description, categoryId, userId) values($1, $2, $3, 1) returning *`;
+    const queryText = `insert into forum_topics(title, description, categoryId, userId) values($1, $2, $3, ${user.id}) returning *`;
     const res = await client.query(queryText, [postData.title, postData.description, postData.categoryId]);
     await client.query('COMMIT');
     return res.rows[0];
