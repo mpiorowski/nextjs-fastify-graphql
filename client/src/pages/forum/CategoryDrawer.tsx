@@ -20,7 +20,7 @@ export const CategoryDrawer = ({ btnRef, isOpen, onClose }: Props) => {
   } = useForm();
 
   const addCategory = useMutation((category: Category) => apiAddCategory(category));
-  const onSubmit = async (values) => {
+  const onSubmit = async (values: Category) => {
     try {
       await addCategory.mutateAsync(values);
       cache.refetchQueries('categories');

@@ -9,6 +9,12 @@ export const Posts = () => {
   const { topicId } = router.query;
   return (
     <Pages>
+      {/* <PostDrawer categoryId={categoryId as string} btnRef={btnRef} isOpen={isOpen} onClose={onClose} />
+      <Flex justifyContent="right" p="5">
+        <Button ref={btnRef} onClick={onOpen} w="200px">
+          Dodaj temat
+        </Button>
+      </Flex> */}
       <Box>{topicId}</Box>
     </Pages>
   );

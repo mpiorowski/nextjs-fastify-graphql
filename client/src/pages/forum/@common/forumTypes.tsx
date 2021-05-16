@@ -4,7 +4,8 @@ export type Category = {
   title: string;
   description?: string;
   icon?: string;
-  userid?: string;
+  userId?: string;
+  topics: Topic[],
   latestTopicUid?: string;
   topicsNumber?: number;
   postsNumber?: number;
@@ -20,8 +21,8 @@ export type Topic = {
   description?: string;
   postsCount: number;
   views: string;
-  categoryid: string;
-  userid: string;
+  categoryId: string;
+  userId: string;
 };
 
 export type Post = {
@@ -29,6 +30,6 @@ export type Post = {
   uid?: string;
   content: string;
   replyid?: string;
-  topicid: string;
-  userid: string;
+  topicId: string;
+  userId: string;
 };

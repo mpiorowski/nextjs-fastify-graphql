@@ -1,8 +1,7 @@
-import { CONFIG, REST } from '../../../@common/@enums';
-import { apiRequest } from '../../../@common/@apiRequest';
-import { Category, Post, Topic } from './forumTypes';
-import { request, gql } from 'graphql-request';
+import { gql, request } from 'graphql-request';
 import { useQuery } from 'react-query';
+import { CONFIG } from '../../../@common/@enums';
+import { Category, Topic } from './forumTypes';
 
 export function useFindAllCategories() {
   const { data, isLoading, isError } = useQuery('categories', apiFindAllCategories);
@@ -24,7 +23,12 @@ export const apiFindAllCategories = (): Promise<{ categories: Category[] }> => {
   );
 };
 
-export const apiFindCategoryById = (catergoryId: string) => {
+export function useFindCategoryById(categoryId: string) {
+  const { data, isLoading, isError } = useQuery(['category', categoryId], () => apiFindCategoryById(categoryId), { enabled: !!categoryId });
+  const categoryData = data?.category || null;
+  return { categoryData, isLoading, isError };
+}
+export const apiFindCategoryById = (catergoryId: string): Promise<{ category: Category }> => {
   const variables = {
     catergoryId: String(catergoryId),
   };
@@ -63,16 +67,19 @@ export const apiAddCategory = (category: Category) => {
   return request(CONFIG.API_URL, query, variables);
 };
 
-export const apiFindAllTopics = (catergoryId: string | string[]) => {
-  return apiRequest<Topic[]>({
-    url: 'http://localhost:3000/api/categories/' + catergoryId + '/topics',
-    method: REST.GET,
-  });
-};
-
-export const apiFindAllPosts = (catergoryId: string | string[], topicUid: string | string[]) => {
-  return apiRequest<Post[]>({
-    url: 'http://localhost:3000/api/categories/' + catergoryId + '/topics/' + topicUid + '/posts',
-    method: REST.GET,
-  });
+export const apiAddTopic = (topic: Topic) => {
+  const variables = {
+    categoryId: topic.categoryId,
+    title: topic.title,
+    description: topic.description,
+  };
+  const query = gql`
+    mutation createTopic($categoryId: String, $title: String, $description: String) {
+      createTopic(categoryId: $categoryId, title: $title, description: $description) {
+        title
+        description
+      }
+    }
+  `;
+  return request(CONFIG.API_URL, query, variables);
 };

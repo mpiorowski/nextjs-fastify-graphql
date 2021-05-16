@@ -1,12 +1,13 @@
 import { ArrowUpDownIcon, TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
-import { Link as UiLink, chakra, Table, TableCaption, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
+import { Link as UiLink, chakra, Table, TableCaption, Tbody, Td, Tfoot, Th, Thead, Tr, Flex, Button, useDisclosure } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useQuery } from 'react-query';
 import { ColumnInstance, HeaderGroup, useSortBy, useTable } from 'react-table';
 import { Pages } from '../../../Pages';
-import { apiFindCategoryById } from '../../@common/forumApis';
+import { apiFindCategoryById, useFindCategoryById } from '../../@common/forumApis';
 import Link from 'next/link';
+import { TopicDrawer } from './TopicDrawer';
 
 type ColumnData = {
   Header: string;
@@ -17,7 +18,10 @@ export const Topics = () => {
   const router = useRouter();
   const { categoryId } = router.query;
 
-  const { data: categoryData } = useQuery(['category', categoryId], () => apiFindCategoryById(categoryId as string));
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const btnRef = React.useRef();
+
+  const { categoryData } = useFindCategoryById(categoryId as string);
 
   const columns = React.useMemo(
     () => [
@@ -42,11 +46,17 @@ export const Topics = () => {
     ],
     [categoryId]
   );
-  const tableData = React.useMemo(() => (categoryData ? [...categoryData.category.topics] : []), [categoryData]);
+  const tableData = React.useMemo(() => (categoryData ? [...categoryData.topics] : []), [categoryData]);
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data: tableData }, useSortBy);
 
   return (
     <Pages>
+      <TopicDrawer categoryId={categoryId as string} btnRef={btnRef} isOpen={isOpen} onClose={onClose} />
+      <Flex justifyContent="right" p="5">
+        <Button ref={btnRef} onClick={onOpen} w="200px">
+          Dodaj temat
+        </Button>
+      </Flex>
       <Table variant="simple" width="80%" margin="auto" mt="10" {...getTableProps()}>
         <TableCaption>Imperial to metric conversion factors</TableCaption>
         <Thead>

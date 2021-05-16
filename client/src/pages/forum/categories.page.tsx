@@ -8,31 +8,31 @@ import { CategoryDrawer } from './CategoryDrawer';
 export default function Categories() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
-  
+
   const { categoryData } = useFindAllCategories();
   return (
     <Pages>
-      <Box>
-        <Flex justifyContent="right" p="5">
-          <Button ref={btnRef} onClick={onOpen} w="200px">
-            Dodaj kategorię
-          </Button>
-        </Flex>
-        <Grid maxWidth="1000px" margin="auto" rowGap="0.5" paddingTop="0.5" paddingBottom="0.5" justifyContent="stretch" background="gray.500">
-          {categoryData.map((category) => (
-            <Grid h="100px" background="gray.800" alignContent="center" key={category.id}>
-              <Link href={`/forum/categories/${category.id}/topics`}>
-                <UiLink fontSize="xl" color="green.400">
-                  {category.title}
-                </UiLink>
-              </Link>
-              <Box fontSize="sm" color="gray.300">
-                {category.description}
-              </Box>
-            </Grid>
-          ))}
-        </Grid>
-        {/* <Grid templateColumns="200px 1fr" h="100vh">
+      <CategoryDrawer btnRef={btnRef} isOpen={isOpen} onClose={onClose} />
+      <Flex justifyContent="right" p="5">
+        <Button ref={btnRef} onClick={onOpen} w="200px">
+          Dodaj kategorię
+        </Button>
+      </Flex>
+      <Grid maxWidth="1000px" margin="auto" rowGap="0.5" paddingTop="0.5" paddingBottom="0.5" justifyContent="stretch" background="gray.500">
+        {categoryData.map((category) => (
+          <Grid h="100px" background="gray.800" alignContent="center" key={category.id}>
+            <Link href={`/forum/categories/${category.id}/topics`}>
+              <UiLink fontSize="xl" color="green.400">
+                {category.title}
+              </UiLink>
+            </Link>
+            <Box fontSize="sm" color="gray.300">
+              {category.description}
+            </Box>
+          </Grid>
+        ))}
+      </Grid>
+      {/* <Grid templateColumns="200px 1fr" h="100vh">
         <Box backgroundColor="gray.700">
           <Box p="4">
             <Button ref={btnRef} onClick={onOpen} w="100%">
@@ -59,8 +59,6 @@ export default function Categories() {
           </Flex>
         </Box>
       </Grid> */}
-        <CategoryDrawer btnRef={btnRef} isOpen={isOpen} onClose={onClose}></CategoryDrawer>
-      </Box>
     </Pages>
   );
 }

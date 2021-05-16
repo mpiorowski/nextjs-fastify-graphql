@@ -3,11 +3,13 @@ export const schema = `
     hello: String
     categories: [Category]
     category(id: String): Category
+    topic(id: String): Topic
   }
   
   type Mutation {
     createCategory(title: String, description: String): Category
-    createTopic(categoryid: String, title: String, description: String): Topic
+    createTopic(categoryId: String, title: String, description: String): Topic
+    createPost(categoryId: String, topicId: String, content: String, replyid: String): Post
   }
   
   type Category {
@@ -29,5 +31,6 @@ export const schema = `
     id: String
     content: String
     reply: Post
+    replyid: String
   }
   `;
