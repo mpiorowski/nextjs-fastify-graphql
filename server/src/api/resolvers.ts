@@ -13,6 +13,6 @@ export const resolvers: IResolvers = {
   Mutation: {
     createCategory: async (_: unknown, data: { title: string; description: string }) => await addCategory(data),
     createTopic: async (_: unknown, data: { categoryId: string; title: string; description: string }) => await addTopic(data),
-    createPost: async (_: unknown, data: { categoryId: string; topicId: string; content: string; replyId: string }) => await addPost(data),
+    createPost: async (_: unknown, data: { topicId: string; content: string; replyId: string }) => await addPost(data),
   },
 };

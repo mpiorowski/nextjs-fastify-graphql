@@ -1,12 +1,11 @@
 import { ArrowUpDownIcon, TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
-import { Link as UiLink, chakra, Table, TableCaption, Tbody, Td, Tfoot, Th, Thead, Tr, Flex, Button, useDisclosure } from '@chakra-ui/react';
+import { Button, chakra, Flex, Link as UiLink, Table, TableCaption, Tbody, Td, Tfoot, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { useQuery } from 'react-query';
 import { ColumnInstance, HeaderGroup, useSortBy, useTable } from 'react-table';
 import { Pages } from '../../../Pages';
-import { apiFindCategoryById, useFindCategoryById } from '../../@common/forumApis';
-import Link from 'next/link';
+import { useFindCategoryById } from '../../@common/forumApis';
 import { TopicDrawer } from './TopicDrawer';
 
 type ColumnData = {

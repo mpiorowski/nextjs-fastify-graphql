@@ -5,7 +5,7 @@ export type Category = {
   description?: string;
   icon?: string;
   userId?: string;
-  topics: Topic[],
+  topics: Topic[];
   latestTopicUid?: string;
   topicsNumber?: number;
   postsNumber?: number;
@@ -19,6 +19,7 @@ export type Topic = {
   uid?: string;
   title: string;
   description?: string;
+  posts?: Post[];
   postsCount: number;
   views: string;
   categoryId: string;

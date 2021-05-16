@@ -2,18 +2,18 @@ import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFoo
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
-import { errorHandler } from '../../../../@common/@errorHandler';
-import { apiAddTopic } from '../../@common/forumApis';
-import { Topic } from '../../@common/forumTypes';
+import { errorHandler } from '../../../../../../@common/@errorHandler';
+import { apiAddPost } from '../../../../@common/forumApis';
+import { Post } from '../../../../@common/forumTypes';
 
 interface Props {
-  categoryId: string;
+  topicId: string;
   isOpen: boolean;
   onClose: () => void;
   btnRef: React.MutableRefObject<undefined>;
 }
 
-export const TopicDrawer = ({ categoryId, btnRef, isOpen, onClose }: Props) => {
+export const PostDrawer = ({ topicId, btnRef, isOpen, onClose }: Props) => {
   const cache = useQueryClient();
   const {
     handleSubmit,
@@ -21,12 +21,12 @@ export const TopicDrawer = ({ categoryId, btnRef, isOpen, onClose }: Props) => {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  const addTopic = useMutation((topic: Topic) => apiAddTopic(topic));
-  const onSubmit = async (values: Topic) => {
+  const addPost = useMutation((post: Post) => apiAddPost(post));
+  const onSubmit = async (values: Post) => {
     try {
-      const request = { ...values, categoryId: categoryId };
-      await addTopic.mutateAsync(request);
-      cache.refetchQueries(['category', categoryId]);
+      const request = { ...values, topicId: topicId };
+      await addPost.mutateAsync(request);
+      cache.refetchQueries(['topic', topicId]);
       onClose();
     } catch (error) {
       console.error(error);
@@ -44,15 +44,10 @@ export const TopicDrawer = ({ categoryId, btnRef, isOpen, onClose }: Props) => {
             <DrawerHeader>Dodaj temat</DrawerHeader>
 
             <DrawerBody>
-              <FormControl isInvalid={errors.title} h="120">
-                <FormLabel htmlFor="title">Tytuł</FormLabel>
-                <Input title="title" placeholder="Tytuł" {...register('title', { required: 'Pole nie może być puste' })} />
-                <FormErrorMessage>{errors.title && errors.title.message}</FormErrorMessage>
-              </FormControl>
-              <FormControl isInvalid={errors.description} h="120">
-                <FormLabel htmlFor="description">Opis</FormLabel>
-                <Textarea description="description" rows={5} placeholder="Tytuł" {...register('description', { required: 'Pole nie może być puste' })} />
-                <FormErrorMessage>{errors.description && errors.description.message}</FormErrorMessage>
+              <FormControl isInvalid={errors.content} h="120">
+                <FormLabel htmlFor="content">Treść</FormLabel>
+                <Input title="content" placeholder="Treść" {...register('content', { required: 'Pole nie może być puste' })} />
+                <FormErrorMessage>{errors.content && errors.content.message}</FormErrorMessage>
               </FormControl>
             </DrawerBody>
 
