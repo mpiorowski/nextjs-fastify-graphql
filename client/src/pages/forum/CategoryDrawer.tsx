@@ -2,6 +2,7 @@ import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFoo
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
+import { handleError } from '../../@common/@handleError';
 import { apiAddCategory } from './@common/forumApis';
 import { Category } from './@common/forumTypes';
 
@@ -22,11 +23,15 @@ export const CategoryDrawer = ({ btnRef, isOpen, onClose }: Props) => {
   const addCategory = useMutation((category: Category) => apiAddCategory(category));
   const onSubmit = async (values: Category) => {
     try {
-      await addCategory.mutateAsync(values);
+      const response = await addCategory.mutateAsync(values);
+      if (response?.errors) {
+        throw response.errors;
+      }
       cache.refetchQueries('categories');
       onClose();
     } catch (error) {
       console.error(error);
+      handleError(error);
     }
   };
 

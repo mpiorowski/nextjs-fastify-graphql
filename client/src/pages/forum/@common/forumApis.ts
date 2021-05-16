@@ -23,7 +23,7 @@ export function useFindCategoryById(categoryId: string) {
   return { categoryData, isLoading, isError };
 }
 
-export const apiAddCategory = (category: Category) => {
+export const apiAddCategory = (category: Category): Promise<Category & { errors: Error[] }> => {
   const query = `
   mutation {
     createCategory(title: "${category.title}", description: "${category.description}") {
@@ -56,7 +56,7 @@ export function useFindTopicById(topicId: string) {
   return { topicData, isLoading, isError };
 }
 
-export const apiAddTopic = (topic: Topic) => {
+export const apiAddTopic = (topic: Topic): Promise<Topic & { errors: Error[] }> => {
   const query = `
   mutation {
     createTopic(categoryId: "${topic.categoryId}", title: "${topic.title}", description: "${topic.description}") {

@@ -26,12 +26,12 @@ export async function getTopicById(topicId: string) {
     await client.query('BEGIN');
 
     // topic
-    let queryText = `select * from forum_topics where id = ${topicId}`;
+    let queryText = `select * from forum_topics where id = '${topicId}'`;
     let res = await client.query(queryText);
     const topic = res.rows[0];
 
     // posts
-    queryText = `select * from forum_posts where topicId = ${topicId}`;
+    queryText = `select * from forum_posts where "topicId" = '${topicId}'`;
     res = await client.query(queryText);
     const posts = res.rows;
 
@@ -56,7 +56,7 @@ export async function addTopic(postData: any, context: MercuriusContext) {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    const queryText = `insert into forum_topics(title, description, categoryId, userId) values($1, $2, $3, ${user.id}) returning *`;
+    const queryText = `insert into forum_topics(title, description, "categoryId", "userId") values($1, $2, $3, '${user.id}') returning *`;
     const res = await client.query(queryText, [postData.title, postData.description, postData.categoryId]);
     await client.query('COMMIT');
     return res.rows[0];

@@ -23,10 +23,10 @@ export async function getCategoryById(categoryId: string) {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    let queryText = `select * from forum_categories where id = ${categoryId}`;
+    let queryText = `select * from forum_categories where id = '${categoryId}'`;
     let res = await client.query(queryText);
     const category = res.rows[0];
-    queryText = `select ft.*, (select count(*) from forum_posts fp where fp.topicId = ft.id) as "postsCount" from forum_topics ft where ft.categoryId = ${categoryId}`;
+    queryText = `select ft.*, (select count(*) from forum_posts fp where fp."topicId" = ft.id) as "postsCount" from forum_topics ft where ft."categoryId" = '${categoryId}'`;
     res = await client.query(queryText);
     const topics = res.rows;
     const response = {
@@ -49,7 +49,7 @@ export async function addCategory(categoryData: any, context: MercuriusContext) 
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    const queryText = `insert into forum_categories(title, description, icon, userId) values('${categoryData.title}', '${categoryData.description}', 'icon', ${user.id}) returning *`;
+    const queryText = `insert into forum_categories(title, description, icon, "userId") values('${categoryData.title}', '${categoryData.description}', 'icon', '${user.id}') returning *`;
     console.log(queryText);
     const res = await client.query(queryText);
     await client.query('COMMIT');

@@ -2,7 +2,7 @@ import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFoo
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
-import { errorHandler } from '../../../../@common/@errorHandler';
+import { handleError } from '../../../../@common/@handleError';
 import { apiAddTopic } from '../../@common/forumApis';
 import { Topic } from '../../@common/forumTypes';
 
@@ -25,12 +25,15 @@ export const TopicDrawer = ({ categoryId, btnRef, isOpen, onClose }: Props) => {
   const onSubmit = async (values: Topic) => {
     try {
       const request = { ...values, categoryId: categoryId };
-      await addTopic.mutateAsync(request);
+      const response = await addTopic.mutateAsync(request);
+      if (response?.errors) {
+        throw response.errors;
+      }
       cache.refetchQueries(['category', categoryId]);
       onClose();
     } catch (error) {
+      handleError(error);
       console.error(error);
-      errorHandler(error);
     }
   };
 

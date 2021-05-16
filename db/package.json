@@ -9,6 +9,7 @@
   },
   "scripts": {
     "migrate": "db-migrate up",
+    "reset": "db-migrate reset",
     "start": "docker-compose -f docker-compose.db.yml up"
   }
 }

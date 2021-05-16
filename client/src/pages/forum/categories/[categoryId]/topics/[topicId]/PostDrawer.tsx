@@ -2,7 +2,7 @@ import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFoo
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
-import { errorHandler } from '../../../../../../@common/@errorHandler';
+import { handleError } from '../../../../../../@common/@handleError';
 import { apiAddPost } from '../../../../@common/forumApis';
 import { Post } from '../../../../@common/forumTypes';
 
@@ -30,7 +30,7 @@ export const PostDrawer = ({ topicId, btnRef, isOpen, onClose }: Props) => {
       onClose();
     } catch (error) {
       console.error(error);
-      errorHandler(error);
+      handleError(error);
     }
   };
 
@@ -46,7 +46,7 @@ export const PostDrawer = ({ topicId, btnRef, isOpen, onClose }: Props) => {
             <DrawerBody>
               <FormControl isInvalid={errors.content} h="120">
                 <FormLabel htmlFor="content">Treść</FormLabel>
-                <Input title="content" placeholder="Treść" {...register('content', { required: 'Pole nie może być puste' })} />
+                <Textarea rows={4} title="content" placeholder="Treść" {...register('content', { required: 'Pole nie może być puste' })} />
                 <FormErrorMessage>{errors.content && errors.content.message}</FormErrorMessage>
               </FormControl>
             </DrawerBody>

@@ -1,46 +1,37 @@
 -- categories table
 CREATE TABLE forum_categories (
+    id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
     title varchar(40) NOT NULL,
     description varchar(200) NOT NULL,
     icon varchar(40) NOT NULL,
-    userId integer NOT NULL REFERENCES users (id) ON DELETE RESTRICT,
-    id serial PRIMARY KEY UNIQUE,
-    uid uuid DEFAULT uuid_generate_v4 () UNIQUE,
-    version int DEFAULT 1,
+    "userId" uuid NOT NULL REFERENCES users (id) ON DELETE RESTRICT,
     active boolean DEFAULT TRUE,
-    deleted boolean DEFAULT FALSE,
-    created timestamptz NOT NULL DEFAULT now(),
-    updated timestamptz NOT NULL DEFAULT now()
+    created timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated timestamptz
 );
 
 -- topics table
 CREATE TABLE forum_topics (
+    id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
+    "categoryId" uuid NOT NULL REFERENCES forum_categories (id) ON DELETE RESTRICT,
     title varchar(100) NOT NULL,
     description varchar(400),
     views integer DEFAULT 0,
-    categoryId integer NOT NULL REFERENCES forum_categories (id) ON DELETE RESTRICT,
-    userId integer NOT NULL REFERENCES users (id) ON DELETE RESTRICT,
-    id serial PRIMARY KEY UNIQUE,
-    uid uuid DEFAULT uuid_generate_v4 () UNIQUE,
-    version int DEFAULT 1,
+    "userId" uuid NOT NULL REFERENCES users (id) ON DELETE RESTRICT,
     active boolean DEFAULT TRUE,
-    deleted boolean DEFAULT FALSE,
-    created timestamptz NOT NULL DEFAULT now(),
-    updated timestamptz NOT NULL DEFAULT now()
+    created timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated timestamptz
 );
 
 -- posts table
 CREATE TABLE forum_posts (
+    id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
+    "topicId" uuid NOT NULL REFERENCES forum_topics (id) ON DELETE RESTRICT,
+    "replyId" uuid REFERENCES forum_posts (id) ON DELETE RESTRICT,
     content varchar(10000) NOT NULL,
-    replyid integer REFERENCES forum_posts (id) ON DELETE RESTRICT,
-    topicId integer NOT NULL REFERENCES forum_topics (id) ON DELETE RESTRICT,
-    userId integer NOT NULL REFERENCES users (id) ON DELETE RESTRICT,
-    id serial PRIMARY KEY UNIQUE,
-    uid uuid DEFAULT uuid_generate_v4 () UNIQUE,
-    version int DEFAULT 1,
+    "userId" uuid NOT NULL REFERENCES users (id) ON DELETE RESTRICT,
     active boolean DEFAULT TRUE,
-    deleted boolean DEFAULT FALSE,
-    created timestamptz NOT NULL DEFAULT now(),
-    updated timestamptz NOT NULL DEFAULT now()
+    created timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated timestamptz
 );
 

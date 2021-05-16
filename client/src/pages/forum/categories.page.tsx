@@ -18,7 +18,7 @@ export default function Categories() {
           Dodaj kategorię
         </Button>
       </Flex>
-      <Grid maxWidth="1000px" margin="auto" rowGap="0.5" paddingTop="0.5" paddingBottom="0.5" justifyContent="stretch" background="gray.500">
+      <Grid maxWidth="1000px" margin="auto" marginTop="40px" rowGap="0.5" paddingTop="0.5" paddingBottom="0.5" justifyContent="stretch" background="gray.500">
         {categoryData.map((category) => (
           <Grid h="100px" background="gray.800" alignContent="center" key={category.id}>
             <Link href={`/forum/categories/${category.id}/topics`}>

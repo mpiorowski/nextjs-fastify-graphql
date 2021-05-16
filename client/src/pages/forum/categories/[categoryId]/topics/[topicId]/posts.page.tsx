@@ -1,8 +1,9 @@
-import { Box, Button, Flex, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Flex, Grid, useDisclosure } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { Pages } from '../../../../../Pages';
 import { useFindTopicById } from '../../../../@common/forumApis';
+import PostContent from './PostContent';
 import { PostDrawer } from './PostDrawer';
 
 export const Posts = () => {
@@ -22,11 +23,11 @@ export const Posts = () => {
           Dodaj post
         </Button>
       </Flex>
-      <Box>
+      <Grid width="80%" margin="auto" marginTop="40px" background="rgba(160, 155, 155, 0.329)" rowGap="0.5" paddingTop="0.5" paddingBottom="0.5" >
         {topicData?.posts.map((post) => (
-          <Box>{post.content}</Box>
+          <PostContent content={post.content} />
         ))}
-      </Box>
+      </Grid>
     </Pages>
   );
 };

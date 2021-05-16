@@ -33,4 +33,10 @@ export const schema = `
     reply: Post
     replyid: String
   }
+
+  type User {
+    id: String
+    email: String
+    name: String
+  }
   `;

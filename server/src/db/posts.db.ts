@@ -7,7 +7,7 @@ export async function addPost(postData: any, context: MercuriusContext) {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    const queryText = `insert into forum_posts(content, topicId, userId) values($1, $2, ${user.id}) returning *`;
+    const queryText = `insert into forum_posts(content, "topicId", "userId") values($1, $2, '${user.id}') returning *`;
     const res = await client.query(queryText, [postData.content, postData.topicId]);
     await client.query('COMMIT');
     console.log(res.rows);

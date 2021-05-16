@@ -3,7 +3,7 @@ import { FastifyInstance } from 'fastify';
 export default function authRoutes(app: FastifyInstance) {
   app.post('/auth/login', async (_request, reply) => {
     const token = await reply.jwtSign({
-      id: '1',
+      id: 'c013e60a-80ec-4e1e-ab6d-f59e07ae47be',
       name: 'mat',
       role: ['admin', 'user'],
     });
