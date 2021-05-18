@@ -67,10 +67,10 @@ export const apiAddTopic = (topic: Topic): Promise<Topic & { errors: Error[] }> 
   return apiRequest({ url: `${CONFIG.API_URL}`, method: 'POST', body: JSON.stringify({ query: query }) });
 };
 
-export const apiAddPost = (post: Post) => {
+export const apiAddPost = (post: Post): Promise<Post & { errors: Error[] }> => {
   const query = `
   mutation {
-    createPost(topicId: "${post.topicId}", content: "${post.content}") {
+    createPost(topicId: "${post.topicId}", content: "${post.content}", replyId: "${post.replyId}") {
       content, id
     }
   }

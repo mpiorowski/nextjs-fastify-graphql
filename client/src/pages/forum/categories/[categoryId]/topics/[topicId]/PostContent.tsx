@@ -1,12 +1,14 @@
 import { Box, GridItem } from '@chakra-ui/layout';
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Grid } from '@chakra-ui/react';
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Button, Grid } from '@chakra-ui/react';
 import React, { ReactElement } from 'react';
 
 interface Props {
   content: string;
+  onOpen: () => void;
+  setReplyId: () => void;
 }
 
-export default function PostContent({ content }: Props): ReactElement {
+export default function PostContent({ content, onOpen, setReplyId }: Props): ReactElement {
   return (
     <Grid background="gray.800" padding="20px">
       <GridItem fontSize="xs" color="gray.400">
@@ -15,9 +17,9 @@ export default function PostContent({ content }: Props): ReactElement {
       <GridItem fontSize="lg">
         <Box marginBottom="20px">{content}</Box>
         <Box>
-          <Accordion allowMultiple colorScheme="blackAlpha">
+          <Accordion allowMultiple colorScheme="blackAlpha" justifyContent="space-between" display="flex">
             <AccordionItem border="none">
-              <AccordionButton width="100px" fontSize="14" p="2px">
+              <AccordionButton width="100px" fontSize="14" p="2px" height="32px">
                 <Box flex="1" textAlign="left">
                   Odpowiedzi
                 </Box>
@@ -34,6 +36,16 @@ export default function PostContent({ content }: Props): ReactElement {
                 </Grid>
               </AccordionPanel>
             </AccordionItem>
+
+            <Button
+              size="sm"
+              onClick={() => {
+                setReplyId();
+                onOpen();
+              }}
+            >
+              Odpowiedz
+            </Button>
           </Accordion>
         </Box>
       </GridItem>

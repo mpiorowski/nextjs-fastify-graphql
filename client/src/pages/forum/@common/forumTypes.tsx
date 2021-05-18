@@ -30,7 +30,7 @@ export type Post = {
   id?: string;
   uid?: string;
   content: string;
-  replyid?: string;
+  replyId?: string;
   topicId: string;
   userId: string;
 };

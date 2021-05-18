@@ -11,21 +11,26 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   btnRef: React.MutableRefObject<undefined>;
+  replyId: string | null;
 }
 
-export const PostDrawer = ({ topicId, btnRef, isOpen, onClose }: Props) => {
+export const PostDrawer = ({ topicId, btnRef, isOpen, onClose, replyId }: Props) => {
   const cache = useQueryClient();
   const {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
+    reset,
   } = useForm();
 
   const addPost = useMutation((post: Post) => apiAddPost(post));
   const onSubmit = async (values: Post) => {
     try {
-      const request = { ...values, topicId: topicId };
-      await addPost.mutateAsync(request);
+      const request = { ...values, topicId: topicId, replyId: replyId || null };
+      const response = await addPost.mutateAsync(request);
+      if (response?.errors) {
+        throw response.errors;
+      }
       cache.refetchQueries(['topic', topicId]);
       onClose();
     } catch (error) {
@@ -36,13 +41,21 @@ export const PostDrawer = ({ topicId, btnRef, isOpen, onClose }: Props) => {
 
   return (
     <>
-      <Drawer isOpen={isOpen} placement="right" onClose={onClose} finalFocusRef={btnRef} size="md">
+      <Drawer
+        isOpen={isOpen}
+        placement="right"
+        onClose={() => {
+          reset();
+          onClose();
+        }}
+        finalFocusRef={btnRef}
+        size="md"
+      >
         <form onSubmit={handleSubmit(onSubmit)}>
           <DrawerOverlay />
           <DrawerContent>
             <DrawerCloseButton />
-            <DrawerHeader>Dodaj temat</DrawerHeader>
-
+            <DrawerHeader>Dodaj temat {replyId}</DrawerHeader>
             <DrawerBody>
               <FormControl isInvalid={errors.content} h="120">
                 <FormLabel htmlFor="content">Treść</FormLabel>
@@ -50,7 +63,6 @@ export const PostDrawer = ({ topicId, btnRef, isOpen, onClose }: Props) => {
                 <FormErrorMessage>{errors.content && errors.content.message}</FormErrorMessage>
               </FormControl>
             </DrawerBody>
-
             <DrawerFooter>
               <Button variant="outline" mr={3} onClick={onClose}>
                 Cancel
