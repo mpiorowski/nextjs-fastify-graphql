@@ -44,6 +44,10 @@ const apiFindTopicyById = (topicId: string): Promise<{ data: { topic: Topic } }>
       posts {
         id
         content
+        replies {
+          id
+          content
+        }
       }
     }
   }

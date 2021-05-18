@@ -30,8 +30,8 @@ export const schema = `
   type Post {
     id: String
     content: String
-    reply: Post
-    replayId: String
+    replies: [Post]
+    replyId: String
   }
 
   type User {

@@ -17,22 +17,24 @@ export const Posts = () => {
 
   const { topicData } = useFindTopicById(topicId as string);
 
-  const handleClose = () => {
-    setReplyId(null);
-    onClose();
-  };
-
   return (
     <Pages>
-      <PostDrawer topicId={topicId as string} btnRef={btnRef} isOpen={isOpen} onClose={handleClose} replyId={replyId} />
+      <PostDrawer topicId={topicId as string} btnRef={btnRef} isOpen={isOpen} onClose={onClose} replyId={replyId} />
       <Flex justifyContent="right" p="5">
-        <Button ref={btnRef} onClick={onOpen} w="200px">
+        <Button
+          ref={btnRef}
+          onClick={() => {
+            setReplyId(null);
+            onOpen();
+          }}
+          w="200px"
+        >
           Dodaj post
         </Button>
       </Flex>
       <Grid width="80%" margin="auto" marginTop="40px" background="rgba(160, 155, 155, 0.329)" rowGap="0.5" paddingTop="0.5" paddingBottom="0.5">
         {topicData?.posts.map((post) => (
-          <PostContent content={post.content} onOpen={onOpen} setReplyId={() => setReplyId(post.id)} />
+          <PostContent post={post} onOpen={onOpen} setReplyId={() => setReplyId(post.id)} />
         ))}
       </Grid>
     </Pages>

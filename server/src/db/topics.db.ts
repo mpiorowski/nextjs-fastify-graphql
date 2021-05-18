@@ -31,13 +31,20 @@ export async function getTopicById(topicId: string) {
     const topic = res.rows[0];
 
     // posts
-    queryText = `select * from forum_posts where "topicId" = '${topicId}'`;
+    queryText = `select * from forum_posts where "topicId" = '${topicId}' and "replyId" is null`;
     res = await client.query(queryText);
     const posts = res.rows;
 
+    const postsWithReplies: any[] = [];
+    posts.forEach(async (post) => {
+      queryText = `select * from forum_posts where "replyId" = '${post.id}'`;
+      res = await client.query(queryText);
+      postsWithReplies.push({ ...post, replies: [...res.rows] });
+    });
+
     const response = {
       ...topic,
-      posts: posts,
+      posts: postsWithReplies,
     };
     await client.query('COMMIT');
     return response;

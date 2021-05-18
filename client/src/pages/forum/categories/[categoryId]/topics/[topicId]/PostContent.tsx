@@ -1,21 +1,22 @@
 import { Box, GridItem } from '@chakra-ui/layout';
 import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Button, Grid } from '@chakra-ui/react';
 import React, { ReactElement } from 'react';
+import { Post } from '../../../../@common/forumTypes';
 
 interface Props {
-  content: string;
+  post: Post;
   onOpen: () => void;
   setReplyId: () => void;
 }
 
-export default function PostContent({ content, onOpen, setReplyId }: Props): ReactElement {
+export default function PostContent({ post, onOpen, setReplyId }: Props): ReactElement {
   return (
     <Grid background="gray.800" padding="20px">
       <GridItem fontSize="xs" color="gray.400">
         Matuesz Piórowski - 2021-01-02 11:33:22
       </GridItem>
       <GridItem fontSize="lg">
-        <Box marginBottom="20px">{content}</Box>
+        <Box marginBottom="20px">{post.content}</Box>
         <Box>
           <Accordion allowMultiple colorScheme="blackAlpha" justifyContent="space-between" display="flex">
             <AccordionItem border="none">
@@ -27,12 +28,16 @@ export default function PostContent({ content, onOpen, setReplyId }: Props): Rea
               </AccordionButton>
               <AccordionPanel p={0} paddingLeft="40px" marginTop="20px">
                 <Grid background="gray.800">
-                  <GridItem fontSize="xs" color="gray.400">
-                    Matuesz Piórowski - 2021-01-02 11:33:22
-                  </GridItem>
-                  <GridItem fontSize="lg">
-                    <Box>{content}</Box>
-                  </GridItem>
+                  {post.replies.map((reply) => (
+                    <>
+                      <GridItem fontSize="xs" color="gray.400">
+                        Matuesz Piórowski - 2021-01-02 11:33:22
+                      </GridItem>
+                      <GridItem fontSize="lg">
+                        <Box>{reply.content}</Box>
+                      </GridItem>
+                    </>
+                  ))}
                 </Grid>
               </AccordionPanel>
             </AccordionItem>

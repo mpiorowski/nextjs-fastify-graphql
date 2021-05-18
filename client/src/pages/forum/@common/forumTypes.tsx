@@ -33,4 +33,5 @@ export type Post = {
   replyId?: string;
   topicId: string;
   userId: string;
+  replies: Post[];
 };
