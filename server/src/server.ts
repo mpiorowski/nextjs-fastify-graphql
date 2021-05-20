@@ -1,12 +1,12 @@
-import Fastify, { FastifyReply, FastifyRequest } from 'fastify';
-import fastifyCookie from 'fastify-cookie';
-import fastifyJWT from 'fastify-jwt';
-import mercurius from 'mercurius';
-import authRoutes from './auth/auth.routes';
-import { resolvers } from './resolvers';
-import { schema } from './schema';
-
-require('dotenv').config();
+import dotenv from "dotenv";
+import Fastify, { FastifyReply, FastifyRequest } from "fastify";
+import fastifyCookie from "fastify-cookie";
+import fastifyJWT from "fastify-jwt";
+import mercurius from "mercurius";
+import authRoutes from "./auth/auth.routes";
+import { resolvers } from "./resolvers";
+import { schema } from "./schema";
+dotenv.config();
 
 const app = Fastify({
   logger: true,
@@ -15,20 +15,20 @@ const app = Fastify({
 // jwt auth
 app.register(fastifyCookie);
 app.register(fastifyJWT, {
-  secret: 'supersecret',
+  secret: "supersecret",
   cookie: {
-    cookieName: 'token',
+    cookieName: "token",
   },
   trusted: validateToken,
 });
 async function validateToken(_request: FastifyRequest, decodedToken: any) {
   // todo - finish blacklisting
-  const denylist = ['token1', 'token2'];
+  const denylist = ["token1", "token2"];
   return !denylist.includes(decodedToken.name);
 }
 
 // auth hook
-app.decorate('authenticate', async function (request: FastifyRequest, reply: FastifyReply) {
+app.decorate("authenticate", async function (request: FastifyRequest, reply: FastifyReply) {
   try {
     await request.jwtVerify();
   } catch (err) {
@@ -37,8 +37,8 @@ app.decorate('authenticate', async function (request: FastifyRequest, reply: Fas
 });
 
 // graphql
-app.addHook('onRoute', (routeOptions) => {
-  if (routeOptions.url === '/graphql') {
+app.addHook("onRoute", (routeOptions) => {
+  if (routeOptions.url === "/graphql") {
     routeOptions.preValidation = [app.authenticate];
   }
 });
@@ -54,7 +54,7 @@ authRoutes(app);
 // Run the server!
 const start = async () => {
   try {
-    await app.listen(4000, '0.0.0.0');
+    await app.listen(4000, "0.0.0.0");
     // app.swagger()
     app.log.info(`server listening on 4000`);
   } catch (err) {

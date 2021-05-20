@@ -24,7 +24,7 @@
   },
   "scripts": {
     "start": "ts-node-dev --files src/server.ts",
-    "build": "tsc -w server.ts",
+    "build": "tsc -w src/server.ts",
     "migrate": "db-migrate up"
   }
 }

@@ -1,10 +1,24 @@
-import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, FormControl, FormErrorMessage, FormLabel, Input, Textarea } from '@chakra-ui/react';
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { useMutation, useQueryClient } from 'react-query';
-import { handleError } from '../../../../../../@common/@handleError';
-import { apiAddPost } from '../../../../@common/forumApis';
-import { Post } from '../../../../@common/forumTypes';
+import {
+  Button,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Input,
+  Textarea,
+} from "@chakra-ui/react";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "react-query";
+import { handleError } from "../../../../../../@common/@handleError";
+import { apiAddPost } from "../../../../@common/forumApis";
+import { Post } from "../../../../../../../../@types/forum.types";
 
 interface Props {
   topicId: string;
@@ -31,7 +45,7 @@ export const PostDrawer = ({ topicId, btnRef, isOpen, onClose, replyId }: Props)
       if (response?.errors) {
         throw response.errors;
       }
-      cache.refetchQueries(['topic', topicId]);
+      cache.refetchQueries(["topic", topicId]);
       onClose();
     } catch (error) {
       console.error(error);
@@ -59,7 +73,12 @@ export const PostDrawer = ({ topicId, btnRef, isOpen, onClose, replyId }: Props)
             <DrawerBody>
               <FormControl isInvalid={errors.content} h="120">
                 <FormLabel htmlFor="content">Treść</FormLabel>
-                <Textarea rows={4} title="content" placeholder="Treść" {...register('content', { required: 'Pole nie może być puste' })} />
+                <Textarea
+                  rows={4}
+                  title="content"
+                  placeholder="Treść"
+                  {...register("content", { required: "Pole nie może być puste" })}
+                />
                 <FormErrorMessage>{errors.content && errors.content.message}</FormErrorMessage>
               </FormControl>
             </DrawerBody>

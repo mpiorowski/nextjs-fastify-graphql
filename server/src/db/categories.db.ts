@@ -1,28 +1,29 @@
-import { MercuriusContext } from 'mercurius';
-import { Pool } from 'pg';
+import { MercuriusContext } from "mercurius";
+import { Pool } from "pg";
+import { Category } from "../../../@types/forum.types";
 
 export async function getAllCategories() {
   const pool = new Pool();
   const client = await pool.connect();
   try {
-    await client.query('BEGIN');
-    const queryText = 'select * from forum_categories';
+    await client.query("BEGIN");
+    const queryText = "select * from forum_categories";
     const res = await client.query(queryText);
-    await client.query('COMMIT');
+    await client.query("COMMIT");
     return res.rows;
   } catch (e) {
-    await client.query('ROLLBACK');
+    await client.query("ROLLBACK");
     throw e;
   } finally {
     client.release();
   }
 }
 
-export async function getCategoryById(categoryId: string) {
+export async function getCategoryById(categoryId: string): Promise<Category[]> {
   const pool = new Pool();
   const client = await pool.connect();
   try {
-    await client.query('BEGIN');
+    await client.query("BEGIN");
     let queryText = `select * from forum_categories where id = '${categoryId}'`;
     let res = await client.query(queryText);
     const category = res.rows[0];
@@ -33,29 +34,29 @@ export async function getCategoryById(categoryId: string) {
       ...category,
       topics: topics,
     };
-    await client.query('COMMIT');
+    await client.query("COMMIT");
     return response;
   } catch (e) {
-    await client.query('ROLLBACK');
+    await client.query("ROLLBACK");
     throw e;
   } finally {
     client.release();
   }
 }
 
-export async function addCategory(categoryData: any, context: MercuriusContext) {
+export async function addCategory(categoryData: any, context: MercuriusContext): Promise<Category> {
   const user = context.reply.request.user as { id: string };
   const pool = new Pool();
   const client = await pool.connect();
   try {
-    await client.query('BEGIN');
+    await client.query("BEGIN");
     const queryText = `insert into forum_categories(title, description, icon, "userId") values('${categoryData.title}', '${categoryData.description}', 'icon', '${user.id}') returning *`;
     console.log(queryText);
     const res = await client.query(queryText);
-    await client.query('COMMIT');
+    await client.query("COMMIT");
     return res.rows[0];
   } catch (e) {
-    await client.query('ROLLBACK');
+    await client.query("ROLLBACK");
     console.error(e);
     throw e;
   } finally {

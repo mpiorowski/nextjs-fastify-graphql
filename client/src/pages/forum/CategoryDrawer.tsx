@@ -1,10 +1,24 @@
-import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, FormControl, FormErrorMessage, FormLabel, Input, Textarea } from '@chakra-ui/react';
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { useMutation, useQueryClient } from 'react-query';
-import { handleError } from '../../@common/@handleError';
-import { apiAddCategory } from './@common/forumApis';
-import { Category } from './@common/forumTypes';
+import {
+  Button,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Input,
+  Textarea,
+} from "@chakra-ui/react";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "react-query";
+import { handleError } from "../../@common/@handleError";
+import { apiAddCategory } from "./@common/forumApis";
+import { Category } from "../../../../@types/forum.types";
 
 interface Props {
   isOpen: boolean;
@@ -27,7 +41,7 @@ export const CategoryDrawer = ({ btnRef, isOpen, onClose }: Props) => {
       if (response?.errors) {
         throw response.errors;
       }
-      cache.refetchQueries('categories');
+      cache.refetchQueries("categories");
       onClose();
     } catch (error) {
       console.error(error);
@@ -47,12 +61,21 @@ export const CategoryDrawer = ({ btnRef, isOpen, onClose }: Props) => {
             <DrawerBody>
               <FormControl isInvalid={errors.title} h="120">
                 <FormLabel htmlFor="title">Tytuł</FormLabel>
-                <Input title="title" placeholder="Tytuł" {...register('title', { required: 'Pole nie może być puste' })} />
+                <Input
+                  title="title"
+                  placeholder="Tytuł"
+                  {...register("title", { required: "Pole nie może być puste" })}
+                />
                 <FormErrorMessage>{errors.title && errors.title.message}</FormErrorMessage>
               </FormControl>
               <FormControl isInvalid={errors.description} h="120">
                 <FormLabel htmlFor="description">Opis</FormLabel>
-                <Textarea description="description" rows={5} placeholder="Tytuł" {...register('description', { required: 'Pole nie może być puste' })} />
+                <Textarea
+                  description="description"
+                  rows={5}
+                  placeholder="Tytuł"
+                  {...register("description", { required: "Pole nie może być puste" })}
+                />
                 <FormErrorMessage>{errors.description && errors.description.message}</FormErrorMessage>
               </FormControl>
             </DrawerBody>

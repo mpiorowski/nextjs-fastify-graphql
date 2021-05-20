@@ -1,7 +1,15 @@
-import { Box, GridItem } from '@chakra-ui/layout';
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Button, Grid } from '@chakra-ui/react';
-import React, { ReactElement } from 'react';
-import { Post } from '../../../../@common/forumTypes';
+import { Box, GridItem } from "@chakra-ui/layout";
+import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
+  Button,
+  Grid,
+} from "@chakra-ui/react";
+import React, { ReactElement } from "react";
+import { Post } from "../../../../../../../../@types/forum.types";
 
 interface Props {
   post: Post;
