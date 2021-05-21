@@ -18,7 +18,7 @@ app.register(fastifyJWT, {
   secret: "supersecret",
   cookie: {
     cookieName: "token",
-    signed: true,
+    signed: false,
   },
   trusted: validateToken,
 });
@@ -43,10 +43,16 @@ app.addHook("onRoute", (routeOptions) => {
     routeOptions.preValidation = [app.authenticate];
   }
 });
+
 app.register(mercurius, {
   schema: schema,
   resolvers: resolvers,
   graphiql: true,
+});
+
+// Declare a route
+app.get("/", async (_request, _reply) => {
+  return { hello: "world" };
 });
 
 // routes

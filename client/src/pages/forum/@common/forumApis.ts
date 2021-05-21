@@ -1,11 +1,10 @@
 import { useQuery } from "react-query";
-import { apiRequest } from "../../../@common/@apiRequest";
-import { CONFIG } from "../../../@common/@enums";
 import { Category, Post, Topic } from "../../../../../@types/forum.types";
+import { apiRequest } from "../../../@common/@apiRequest";
 
 const apiFindAllCategories = (): Promise<{ data: { categories: Category[] } }> => {
   const query = `query { categories { id title description } }`;
-  return apiRequest({ url: `${CONFIG.API_URL}?query=${query}`, method: "GET" });
+  return apiRequest({ url: `/api?query=${query}`, method: "GET" });
 };
 export function useFindAllCategories() {
   const { data, isLoading, isError } = useQuery("categories", apiFindAllCategories);
@@ -15,7 +14,7 @@ export function useFindAllCategories() {
 
 const apiFindCategoryById = (categoryId: string): Promise<{ data: { category: Category } }> => {
   const query = `query { category(id: "${categoryId}") { id title description topics { id title description postsCount} } }`;
-  return apiRequest({ url: `${CONFIG.API_URL}?query=${query}`, method: "GET" });
+  return apiRequest({ url: `/api?query=${query}`, method: "GET" });
 };
 export function useFindCategoryById(categoryId: string) {
   const { data, isLoading, isError } = useQuery(["category", categoryId], () => apiFindCategoryById(categoryId), {
@@ -33,7 +32,7 @@ export const apiAddCategory = (category: Category): Promise<Category & { errors:
     }
   }
   `;
-  return apiRequest({ url: `${CONFIG.API_URL}`, method: "POST", body: JSON.stringify({ query: query }) });
+  return apiRequest({ url: `/api`, method: "POST", body: JSON.stringify({ query: query }) });
 };
 
 const apiFindTopicyById = (topicId: string): Promise<{ data: { topic: Topic } }> => {
@@ -54,7 +53,7 @@ const apiFindTopicyById = (topicId: string): Promise<{ data: { topic: Topic } }>
     }
   }
   `;
-  return apiRequest({ url: `${CONFIG.API_URL}?query=${query}`, method: "GET" });
+  return apiRequest({ url: `/api?query=${query}`, method: "GET" });
 };
 export function useFindTopicById(topicId: string) {
   const { data, isLoading, isError } = useQuery(["topic", topicId], () => apiFindTopicyById(topicId), {
@@ -72,7 +71,7 @@ export const apiAddTopic = (topic: Topic): Promise<Topic & { errors: Error[] }> 
     }
   }
   `;
-  return apiRequest({ url: `${CONFIG.API_URL}`, method: "POST", body: JSON.stringify({ query: query }) });
+  return apiRequest({ url: `/api`, method: "POST", body: JSON.stringify({ query: query }) });
 };
 
 export const apiAddPost = (post: Post): Promise<Post & { errors: Error[] }> => {
@@ -83,5 +82,5 @@ export const apiAddPost = (post: Post): Promise<Post & { errors: Error[] }> => {
     }
   }
   `;
-  return apiRequest({ url: `${CONFIG.API_URL}`, method: "POST", body: JSON.stringify({ query: query }) });
+  return apiRequest({ url: `/api`, method: "POST", body: JSON.stringify({ query: query }) });
 };

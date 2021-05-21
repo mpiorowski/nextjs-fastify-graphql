@@ -1,0 +1,1 @@
+gunzip < dump_bills_data.gz | docker exec -i bills-db-dev psql -U admin -d server

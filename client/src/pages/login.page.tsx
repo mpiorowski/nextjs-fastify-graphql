@@ -7,7 +7,7 @@ import { LoadingPage } from "./@common/LoadingPage";
 // TODO - finish login
 function signIn() {
   return apiRequest<{ name: string }>({
-    url: "http://localhost:3000/auth/login",
+    url: `/auth/login`,
     method: "POST",
     body: JSON.stringify({}),
   });

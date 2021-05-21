@@ -1,0 +1,20 @@
+# Stage 1 - Create a builder container
+FROM node:alpine
+
+WORKDIR /usr/app
+COPY ./@types ./@types
+WORKDIR /usr/app/client
+
+COPY ./client/package.json ./package.json
+
+RUN yarn install --production
+
+COPY ./client/tsconfig.json ./tsconfig.json
+COPY ./client/.env ./.env
+COPY ./client/src ./src
+COPY ./client/public ./public
+COPY ./client/next.config.js ./next.config.js
+
+RUN yarn run build
+
+# USER node
