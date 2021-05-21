@@ -3,11 +3,11 @@ module.exports = {
     return [
       {
         source: "/api",
-        destination: "http://server:4000/graphql",
+        destination: "http://localhost:4000/graphql",
       },
       {
         source: "/auth/:slug",
-        destination: "http://server:4000/auth/:slug",
+        destination: "http://localhost:4000/auth/:slug",
       },
     ];
   },
