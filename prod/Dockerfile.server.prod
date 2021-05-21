@@ -15,4 +15,4 @@ COPY ./server/src ./src
 
 RUN yarn run tsc
 
-# USER node
+USER node

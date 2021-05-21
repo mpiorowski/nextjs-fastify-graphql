@@ -1,8 +1,7 @@
 # Use postgres/example user/password credentials
 version: '3.6'
-
 services:
-
+  
   db:
     container_name: db-prod
     build:
@@ -30,7 +29,7 @@ services:
     volumes:
       - ../db/prod:/data/pgdata
     # restart: always
-
+  
   server:
     container_name: server-prod
     build:
@@ -42,7 +41,7 @@ services:
       - db
     # restart: always
     command: sh -c "echo 'starting server' && yarn run prod"
-
+  
   client:
     container_name: client-prod
     build:

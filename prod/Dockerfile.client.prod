@@ -17,4 +17,4 @@ COPY ./client/next.config.js ./next.config.js
 
 RUN yarn run build
 
-# USER node
+USER node
