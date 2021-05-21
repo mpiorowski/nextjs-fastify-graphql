@@ -1,11 +1,9 @@
-import { ChakraProvider, ColorModeProvider } from '@chakra-ui/react';
-import 'antd/dist/antd.css';
-import type { AppProps } from 'next/app';
-import React from 'react';
-import { CookiesProvider } from 'react-cookie';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { Hydrate } from 'react-query/hydration';
-import '../styles/globals.css';
+import { ChakraProvider, ColorModeProvider } from "@chakra-ui/react";
+import type { AppProps } from "next/app";
+import React from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { Hydrate } from "react-query/hydration";
+import "../styles/globals.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const queryClientRef = React.useRef<QueryClient>();
@@ -27,12 +25,10 @@ function MyApp({ Component, pageProps }: AppProps) {
           <ColorModeProvider
             options={{
               // useSystemColorMode: true,
-              initialColorMode: 'dark',
+              initialColorMode: "dark",
             }}
           >
-            <CookiesProvider>
-              <Component {...pageProps} />
-            </CookiesProvider>
+            <Component {...pageProps} />
           </ColorModeProvider>
         </ChakraProvider>
       </Hydrate>

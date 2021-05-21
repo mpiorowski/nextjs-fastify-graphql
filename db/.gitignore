@@ -1,2 +1,3 @@
-./dev
-./yarn.lock
+/dev
+/prod
+yarn.lock

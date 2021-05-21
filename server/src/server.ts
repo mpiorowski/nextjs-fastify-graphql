@@ -18,6 +18,7 @@ app.register(fastifyJWT, {
   secret: "supersecret",
   cookie: {
     cookieName: "token",
+    signed: true,
   },
   trusted: validateToken,
 });

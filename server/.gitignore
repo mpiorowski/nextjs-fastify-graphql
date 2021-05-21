@@ -1,5 +1,5 @@
-
-./db/dev
+build
+yarn.lock
 
 # Logs
 logs
