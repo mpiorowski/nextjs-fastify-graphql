@@ -27,7 +27,7 @@ services:
       - "5432:5432"
     volumes:
       - ../db/prod:/data/pgdata
-    restart: unless-stopped
+    restart: on-failure:3
 
   server:
     container_name: server-prod
@@ -39,7 +39,7 @@ services:
     depends_on:
       - db
     command: sh -c "echo 'starting server' && yarn run prod"
-    restart: unless-stopped
+    restart: on-failure:3
 
   client:
     container_name: client-prod
@@ -52,7 +52,7 @@ services:
       - db
       - server
     command: sh -c "echo 'starting client' && yarn start"
-    restart: unless-stopped
+    restart: on-failure:3
 
   nginx:
     image: nginx:alpine
@@ -65,4 +65,4 @@ services:
       - "443:443"
     depends_on:
       - client
-    restart: unless-stopped
+    restart: on-failure:3

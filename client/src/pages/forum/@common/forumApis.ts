@@ -77,7 +77,9 @@ export const apiAddTopic = (topic: Topic): Promise<Topic & { errors: Error[] }> 
 export const apiAddPost = (post: Post): Promise<Post & { errors: Error[] }> => {
   const query = `
   mutation {
-    createPost(topicId: "${post.topicId}", content: "${post.content}", replyId: "${post.replyId}") {
+    createPost(topicId: "${post.topicId}", content: "${post.content}", replyId: ${
+    post.replyId ? `"${post.replyId}"` : null
+  }) {
       content, id
     }
   }
