@@ -12,5 +12,5 @@ sudo chmod 777 -R prod
 docker-compose -f ../prod/docker-compose.prod.yml up -d --build
 
 # 4. Run migrations
-yarn install
-yarn migrate
+npm install
+npm run migrate

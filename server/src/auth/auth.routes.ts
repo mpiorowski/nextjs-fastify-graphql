@@ -15,7 +15,7 @@ export default function authRoutes(app: FastifyInstance) {
 
     reply
       .setCookie("token", token, {
-        domain: "localhost",
+        domain: process.env["DOMAIN"],
         path: "/",
         secure: false, // send cookie over HTTPS only
         httpOnly: true,
@@ -28,7 +28,7 @@ export default function authRoutes(app: FastifyInstance) {
   app.post("/auth/logout", async (_request, reply) => {
     reply
       .setCookie("token", "", {
-        domain: "localhost",
+        domain: process.env["DOMAIN"],
         path: "/",
         secure: false, // send cookie over HTTPS only
         httpOnly: true,
