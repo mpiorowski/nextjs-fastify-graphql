@@ -1,5 +1,5 @@
 {
-  "dev": {
+  "pg": {
     "driver": "pg",
     "user": "admin",
     "password": "12345",

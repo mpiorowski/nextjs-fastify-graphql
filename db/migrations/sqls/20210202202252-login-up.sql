@@ -10,3 +10,5 @@ CREATE TABLE users (
   updated timestamptz
 );
 
+INSERT INTO users (name, email)
+  VALUES ('mat', 'mateuszpiorowski@gmail.com');

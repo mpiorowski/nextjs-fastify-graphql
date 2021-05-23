@@ -8,8 +8,8 @@
     "db-migrate-pg": "^1.2.2"
   },
   "scripts": {
-    "migrate": "db-migrate up",
-    "reset": "db-migrate reset",
+    "migrate": "db-migrate up -e pg",
+    "reset": "db-migrate reset -e pg",
     "start": "docker-compose -f docker-compose.db.yml up"
   }
 }
