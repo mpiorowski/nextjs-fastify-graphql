@@ -10,15 +10,14 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Input,
   Textarea,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
+import { Post } from "../../../../../../../../@types/forum.types";
 import { handleError } from "../../../../../../@common/@handleError";
 import { apiAddPost } from "../../../../@common/forumApis";
-import { Post } from "../../../../../../../../@types/forum.types";
 
 interface Props {
   topicId: string;
@@ -36,6 +35,12 @@ export const PostDrawer = ({ topicId, btnRef, isOpen, onClose, replyId }: Props)
     formState: { errors, isSubmitting },
     reset,
   } = useForm();
+
+  useEffect(() => {
+    return () => {
+      reset();
+    };
+  }, [isOpen]);
 
   const addPost = useMutation((post: Post) => apiAddPost(post));
   const onSubmit = async (values: Post) => {
