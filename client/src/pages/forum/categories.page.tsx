@@ -1,23 +1,27 @@
-import { Box, Button, Flex, Grid, Link as UiLink, useDisclosure } from "@chakra-ui/react";
-import Link from "next/link";
-import React from "react";
+import { Box, Button, Flex, Grid, useDisclosure } from "@chakra-ui/react";
+import React, { useState } from "react";
+import { Category } from "../../../../@types/forum.types";
 import { Pages } from "../Pages";
 import { useFindAllCategories } from "./@common/forumApis";
+import TopicsTable from "./categories/[categoryId]/TopicsTable";
 import { CategoryDrawer } from "./CategoryDrawer";
 
 export default function Categories() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
 
+  const [activeCategory, setActiveCategory] = useState<Category | null>(null);
+
   const { categoryData } = useFindAllCategories();
+  // const { topicData } = useFindTopicById(categoryId);
   return (
     <Pages>
       <CategoryDrawer btnRef={btnRef} isOpen={isOpen} onClose={onClose} />
-      <Flex justifyContent="right" p="5">
+      {/* <Flex justifyContent="right" p="5">
         <Button ref={btnRef} onClick={onOpen} w="200px">
           Dodaj kategorię
         </Button>
-      </Flex>
+      </Flex> 
       <Grid
         maxWidth="1000px"
         margin="auto"
@@ -40,34 +44,42 @@ export default function Categories() {
             </Box>
           </Grid>
         ))}
-      </Grid>
-      {/* <Grid templateColumns="200px 1fr" h="100vh">
+      </Grid> */}
+      <Grid templateColumns="250px 1fr" h="100vh">
         <Box backgroundColor="gray.700">
           <Box p="4">
             <Button ref={btnRef} onClick={onOpen} w="100%">
               Dodaj kategorię
             </Button>
           </Box>
-          <Grid direction="column" mt="10" borderBottom="1px solid gray">
-            {data.categories.map((category) => (
-              <Box _hover={{ backgroundColor: 'gray.500', cursor: 'pointer' }}>
-                <Flex h="50px" borderTop="0.5px solid gray" alignItems="center" justifyContent="space-between" >
-                  <Box pl="4">{category.title}</Box>
-                  <Box pr="4">
-                    12 <FontAwesomeIcon icon={faComment} />
-                  </Box>
-                </Flex>
-                <Flex fontSize="x-small" pl="4">
-                  Ostatni post: Wkrótce będę ...
-                </Flex>
-              </Box>
+          <Grid direction="column" mt="10" backgroundColor="gray.500" rowGap="0.5" paddingTop="0.5" paddingBottom="0.5">
+            {categoryData.map((category) => (
+              <Grid
+                key={category.id}
+                onClick={() => setActiveCategory(category)}
+                _hover={{ backgroundColor: "gray.600", cursor: "pointer" }}
+                h="90px"
+                width="250px"
+                pl="6"
+                backgroundColor={activeCategory?.id === category.id ? "gray.600" : "gray.700"}
+                alignContent="center"
+                justifyContent="space-between"
+              >
+                <Box fontSize="large" textOverflow="ellipsis" width="250px" whiteSpace="nowrap" overflow="clip">
+                  {category.title}
+                </Box>
+                <Box fontSize="smaller" color="gray.400">
+                  Liczba postów: {category.postsNumber || 0}
+                </Box>
+                <Box fontSize="smaller" color="gray.500">
+                  Dzisiaj o 12:22
+                </Box>
+              </Grid>
             ))}
           </Grid>
-          <Flex fontSize="26" alignItems="center">
-            Kategorie
-          </Flex>
         </Box>
-      </Grid> */}
+        {activeCategory && <TopicsTable category={activeCategory}></TopicsTable>}
+      </Grid>
     </Pages>
   );
 }
