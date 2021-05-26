@@ -1,5 +1,5 @@
 import { Box, Grid } from "@chakra-ui/layout";
-import { Center } from "@chakra-ui/react";
+import { Center, Tooltip } from "@chakra-ui/react";
 import { faComments, faHome, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
@@ -51,37 +51,44 @@ export const Pages = ({ children }: Props) => {
   return (
     <Grid gridTemplateColumns="60px 1fr" h="100vh">
       <Box backgroundColor="gray.900">
-        <Link href="/">
+        <Tooltip label="Home" aria-label="home-tooltip" placement="right" shouldWrapChildren>
+          <Link href="/">
+            <Center
+              h="40px"
+              _hover={{ color: "gray.400", cursor: "pointer" }}
+              m="2"
+              borderRadius="4"
+              backgroundColor={activeUrl === "" && "gray.600"}
+            >
+              <FontAwesomeIcon icon={faHome} size="lg" />
+            </Center>
+          </Link>
+        </Tooltip>
+        <Tooltip label="Forum" aria-label="forum-tooltip" placement="right" shouldWrapChildren>
+          <Link href="/forum/categories">
+            <Center
+              h="40px"
+              _hover={{ color: "gray.400", cursor: "pointer" }}
+              m="2"
+              borderRadius="4"
+              backgroundColor={activeUrl === "forum" && "gray.600"}
+            >
+              <FontAwesomeIcon icon={faComments} size="lg" />
+            </Center>
+          </Link>
+        </Tooltip>
+
+        <Tooltip label="Logout" aria-label="logout-tooltip" placement="right" shouldWrapChildren>
           <Center
             h="40px"
             _hover={{ color: "gray.400", cursor: "pointer" }}
             m="2"
             borderRadius="4"
-            backgroundColor={activeUrl === "" && "gray.600"}
+            onClick={handleLogout}
           >
-            <FontAwesomeIcon icon={faHome} size="lg" />
+            <FontAwesomeIcon icon={faSignOutAlt} size="lg" />
           </Center>
-        </Link>
-        <Link href="/forum/categories">
-          <Center
-            h="40px"
-            _hover={{ color: "gray.400", cursor: "pointer" }}
-            m="2"
-            borderRadius="4"
-            backgroundColor={activeUrl === "forum" && "gray.600"}
-          >
-            <FontAwesomeIcon icon={faComments} size="lg" />
-          </Center>
-        </Link>
-        <Center
-          h="40px"
-          _hover={{ color: "gray.400", cursor: "pointer" }}
-          m="2"
-          borderRadius="4"
-          onClick={handleLogout}
-        >
-          <FontAwesomeIcon icon={faSignOutAlt} size="lg" />
-        </Center>
+        </Tooltip>
       </Box>
       <Box>{children}</Box>
     </Grid>
