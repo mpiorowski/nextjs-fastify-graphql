@@ -4,7 +4,7 @@ import fastifyCookie from "fastify-cookie";
 import fastifyJWT from "fastify-jwt";
 import mercurius from "mercurius";
 import authRoutes from "./auth/auth.routes";
-import { resolvers } from "./resolvers";
+import { loaders, resolvers } from "./resolvers";
 import { schema } from "./schema";
 dotenv.config();
 
@@ -47,6 +47,7 @@ app.addHook("onRoute", (routeOptions) => {
 app.register(mercurius, {
   schema: schema,
   resolvers: resolvers,
+  loaders: loaders,
   graphiql: true,
 });
 
