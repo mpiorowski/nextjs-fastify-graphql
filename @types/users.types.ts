@@ -1,10 +1,10 @@
 export type User = {
   id?: string;
-  name: string;
+  name: string | null;
   email: string;
   email_verified: Date;
-  image: string;
-  active: boolean;
-  created: Date;
-  updated: Date;
+  image: string | null;
+  active?: boolean;
+  created?: Date;
+  updated?: Date;
 };

@@ -3,7 +3,7 @@ import { Category, Post, Topic } from "../../../../../@types/forum.types";
 import { apiRequest } from "../../../@common/@apiRequest";
 
 const apiFindAllCategories = (): Promise<{ data: { categories: Category[] } }> => {
-  const query = `query { categories { id title description } }`;
+  const query = `query { categories { id title description topics { title } } }`;
   return apiRequest({ url: `/api?query=${query}`, method: "GET" });
 };
 export function useFindAllCategories() {

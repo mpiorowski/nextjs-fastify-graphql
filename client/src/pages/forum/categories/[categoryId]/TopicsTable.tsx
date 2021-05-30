@@ -1,5 +1,6 @@
 import { ArrowUpDownIcon, TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import {
+  Box,
   Button,
   chakra,
   Flex,
@@ -15,10 +16,9 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import React from "react";
 import { ColumnInstance, HeaderGroup, useSortBy, useTable } from "react-table";
-import { Pages } from "../../../Pages";
+import { Category } from "../../../../../../@types/forum.types";
 import { useFindCategoryById } from "../../@common/forumApis";
 import { TopicDrawer } from "./TopicDrawer";
 
@@ -27,13 +27,16 @@ type ColumnData = {
   accessor: string;
   isNumeric: boolean;
 };
-export const Topics = () => {
-  const router = useRouter();
-  const { categoryId } = router.query;
 
+type Props = {
+  category: Category;
+};
+
+export default function TopicsTable({ category }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
 
+  const categoryId = category.id;
   const { categoryData } = useFindCategoryById(categoryId as string);
 
   const columns = React.useMemo(
@@ -66,9 +69,15 @@ export const Topics = () => {
   );
 
   return (
-    <Pages>
+    <Box>
       <TopicDrawer categoryId={categoryId as string} btnRef={btnRef} isOpen={isOpen} onClose={onClose} />
-      <Flex justifyContent="right" p="5">
+      <Flex justifyContent="space-between" p="5" width="80%" margin="auto" marginTop="40px">
+        <Box>
+          <Box fontSize="x-large" color="gray.400">
+            {category.title}
+          </Box>
+          <Box color="gray.500">{category.description}</Box>
+        </Box>
         <Button ref={btnRef} onClick={onOpen} w="200px">
           Dodaj temat
         </Button>
@@ -102,7 +111,7 @@ export const Topics = () => {
             prepareRow(row);
             return (
               <Tr {...row.getRowProps()}>
-                {row.cells.map((cell, index) => {
+                {row.cells.map((cell) => {
                   const column = cell.column as ColumnInstance<any> & ColumnData;
                   return (
                     <Td {...cell.getCellProps()} isNumeric={column.isNumeric}>
@@ -122,8 +131,6 @@ export const Topics = () => {
           </Tr>
         </Tfoot>
       </Table>
-    </Pages>
+    </Box>
   );
-};
-
-export default Topics;
+}
