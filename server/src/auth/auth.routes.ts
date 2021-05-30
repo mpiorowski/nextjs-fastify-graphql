@@ -13,7 +13,7 @@ export default function authRoutes(app: FastifyInstance) {
 
     // TODO - config
     const tokenLink = `http://${process.env["DOMAIN"]}${
-      process.env["NODE_ENV"] === "development" && ":3000"
+      process.env["NODE_ENV"] === "development" ? ":3000" : ""
     }/token?token=${token}`;
     await sendEmail(email.email, "Sign in to app.mpiorowski.org", tokenLink);
     reply.status(204).send();
