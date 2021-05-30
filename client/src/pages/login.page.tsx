@@ -1,27 +1,91 @@
-import { Button } from "@chakra-ui/react";
+import { Box, Button, Flex, FormControl, FormErrorMessage, FormLabel, Input } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { apiRequest } from "../@common/@apiRequest";
+import { handleError } from "../@common/@handleError";
 import { LoadingPage } from "./@common/LoadingPage";
 
-// TODO - finish login
-function signIn() {
-  return apiRequest<{ name: string }>({
-    url: `/auth/login`,
-    method: "POST",
-    body: JSON.stringify({}),
-  });
-}
-
-export default function Login() {
+export default function Login(): JSX.Element {
   const router = useRouter();
+  const { query } = router;
 
-  async function handleLogIn() {
-    const response = await signIn();
-    console.log("auth response", response);
-    router.push("/");
+  const [emailSend, setEmailSend] = useState(false);
+
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isSubmitting },
+  } = useForm();
+
+  useEffect(() => {
+    if (query.token) {
+      apiRequest({
+        url: `/auth/token`,
+        method: "POST",
+        body: JSON.stringify(query.token),
+      }).then((response) => {
+        if (response) {
+          router.push("/");
+        } else {
+          router.replace("/login", undefined, { shallow: true });
+        }
+      });
+    }
+  }, [query]);
+
+  const onSubmit = async (values: { email: string }) => {
+    try {
+      await apiRequest({
+        url: `/auth/login`,
+        method: "POST",
+        body: JSON.stringify(values),
+      });
+      setEmailSend(true);
+      return <LoadingPage></LoadingPage>;
+    } catch (error) {
+      console.error(error);
+      handleError(error);
+    }
+  };
+
+  if (query.token) {
     return <LoadingPage></LoadingPage>;
   }
 
-  return <Button onClick={() => handleLogIn()}>Log in</Button>;
+  if (emailSend) {
+    return (
+      <Flex width="100wh" height="100vh">
+        <Box margin="auto" fontSize={22}>
+          Email został wysłany
+        </Box>
+      </Flex>
+    );
+  }
+
+  return (
+    <Flex width="100wh" height="100vh">
+      <Box margin="auto" width={300}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <FormControl id="email" isInvalid={errors.email} h="100px">
+            <FormLabel>Email</FormLabel>
+            <Input title="email" type="email" {...register("email", { required: "Pole nie może być puste" })} />
+            <FormErrorMessage>{errors.email && errors.email.message}</FormErrorMessage>
+          </FormControl>
+          {/* <FormControl id="password" isInvalid={errors.password} h="100px">
+            <FormLabel>Password</FormLabel>
+            <Input
+              title="password"
+              type="password"
+              {...register("password", { required: "Pole nie może być puste" })}
+            />
+            <FormErrorMessage>{errors.password && errors.password.message}</FormErrorMessage>
+          </FormControl> */}
+          <Button mt={4} width="100%" type="submit" isLoading={isSubmitting}>
+            Send email
+          </Button>
+        </form>
+      </Box>
+    </Flex>
+  );
 }

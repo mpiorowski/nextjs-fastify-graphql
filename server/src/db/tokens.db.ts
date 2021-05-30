@@ -1,12 +1,12 @@
 import { Pool } from "pg";
-import { User } from "../../../@types/users.types";
+import { Token } from "../../../@types/auth.types";
 
-export async function findUserByEmail(email: string): Promise<User> {
+export async function findToken(token: string, type: string): Promise<Token> {
   const pool = new Pool();
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
-    const queryText = `select * from sys_users where email = '${email}'`;
+    const queryText = `select * from sys_tokens where token = '${token}' and type = '${type}' and expires > now()`;
     const res = await client.query(queryText);
     await client.query("COMMIT");
     return res.rows[0];
@@ -18,13 +18,16 @@ export async function findUserByEmail(email: string): Promise<User> {
   }
 }
 
-export async function addUser(user: User): Promise<User> {
+export async function addToken(token: string, email: string): Promise<void> {
   const pool = new Pool();
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
-    const queryText = "insert into sys_users (name, email, email_verified, image) values ($1, $2, $3, $4) returning *";
-    const res = await client.query(queryText, [user.name, user.email, user.email_verified, user.image]);
+    const expires = new Date(
+      Date.now() + parseFloat(process.env["TOKEN_EXPIRATION_TIME"] as string) * 1000,
+    ).toISOString();
+    const queryText = `insert into sys_tokens (token, type, identifier, expires) values('${token}', 'register', '${email}', '${expires}')`;
+    const res = await client.query(queryText);
     await client.query("COMMIT");
     return res.rows[0];
   } catch (e) {
@@ -35,13 +38,13 @@ export async function addUser(user: User): Promise<User> {
   }
 }
 
-export async function editUser(user: User): Promise<User> {
+export async function deleteToken(tokenId: string): Promise<void> {
   const pool = new Pool();
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
-    const queryText = "update sys_users set name = $1, email = $2, email_verified = $3, image = $4 returning *";
-    const res = await client.query(queryText, [user.name, user.email, user.email_verified, user.image]);
+    const queryText = `delete from sys_tokens where id = $1`;
+    const res = await client.query(queryText, [tokenId]);
     await client.query("COMMIT");
     return res.rows[0];
   } catch (e) {

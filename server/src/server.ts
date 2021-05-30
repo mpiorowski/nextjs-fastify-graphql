@@ -51,9 +51,9 @@ app.register(mercurius, {
   graphiql: true,
 });
 
-// Declare a route
-app.get("/", async (_request, _reply) => {
-  return { hello: "world" };
+app.setErrorHandler(function (error, _request, reply) {
+  console.error(error);
+  return reply.status(400).send(error);
 });
 
 // routes

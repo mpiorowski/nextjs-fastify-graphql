@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { ReactElement } from "react";
 import { useQuery } from "react-query";
+import { User } from "../../../@types/users.types";
 import { apiRequest } from "../@common/@apiRequest";
 import { LoadingPage } from "./@common/LoadingPage";
 
@@ -13,31 +14,31 @@ type Props = {
   children?: ReactElement | ReactElement[];
 };
 
-export function findActiveUser() {
-  return apiRequest<{ name: string }>({
+export function findActiveUser(): Promise<User> {
+  return apiRequest({
     url: `/auth/user`,
     method: "GET",
   });
 }
 
-export function logout() {
-  return apiRequest<{ name: string }>({
+export function logout(): Promise<void> {
+  return apiRequest({
     url: `/auth/logout`,
     method: "POST",
     body: JSON.stringify({}),
   });
 }
 
-export const Pages = ({ children }: Props) => {
+export const Pages: React.FC<Props> = ({ children }: Props) => {
   const router = useRouter();
 
-  const { data, isLoading } = useQuery("activeUser", findActiveUser);
+  const { data: user, isLoading } = useQuery("activeUser", findActiveUser);
 
   if (isLoading) {
     return <LoadingPage></LoadingPage>;
   }
 
-  if (!data?.name) {
+  if (!user?.email) {
     router.push("/login");
     return <LoadingPage></LoadingPage>;
   }
