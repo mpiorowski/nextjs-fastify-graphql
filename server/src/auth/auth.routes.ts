@@ -1,6 +1,6 @@
 import { randomBytes } from "crypto";
 import { FastifyInstance } from "fastify";
-import { sendEmail } from "../../config/mail.config";
+import { sendEmail } from "../config/mail.config";
 import { addToken, deleteToken, findToken } from "../db/tokens.db";
 import { addUser, editUser, findUserByEmail } from "../db/users.db";
 
