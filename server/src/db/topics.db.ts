@@ -1,7 +1,8 @@
 import { MercuriusContext } from "mercurius";
 import { Pool } from "pg";
+import { Topic } from "../../../@types/forum.types";
 
-export async function getAllTopicsByCategoryId(categoryId: string) {
+export async function getAllTopicsByCategoryId(categoryId: string): Promise<Topic[]> {
   const pool = new Pool();
   const client = await pool.connect();
   try {
@@ -19,35 +20,18 @@ export async function getAllTopicsByCategoryId(categoryId: string) {
   }
 }
 
-export async function getTopicById(topicId: string) {
+export async function getTopicById(topicId: string): Promise<Topic> {
   const pool = new Pool();
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
 
-    // topic
-    let queryText = `select * from forum_topics where id = '${topicId}'`;
-    let res = await client.query(queryText);
+    const queryText = `select * from forum_topics where id = '${topicId}'`;
+    const res = await client.query(queryText);
     const topic = res.rows[0];
 
-    // posts
-    queryText = `select * from forum_posts where "topicId" = '${topicId}' and "replyId" is null`;
-    res = await client.query(queryText);
-    const posts = res.rows;
-
-    const postsWithReplies: any[] = [];
-    posts.forEach(async (post) => {
-      queryText = `select * from forum_posts where "replyId" = '${post.id}'`;
-      res = await client.query(queryText);
-      postsWithReplies.push({ ...post, replies: [...res.rows] });
-    });
-
-    const response = {
-      ...topic,
-      posts: postsWithReplies,
-    };
     await client.query("COMMIT");
-    return response;
+    return topic;
   } catch (e) {
     await client.query("ROLLBACK");
     console.error(e);
@@ -57,7 +41,7 @@ export async function getTopicById(topicId: string) {
   }
 }
 
-export async function addTopic(postData: any, context: MercuriusContext) {
+export async function addTopic(postData: any, context: MercuriusContext): Promise<Topic> {
   const user = context.reply.request.user as { id: string };
   const pool = new Pool();
   const client = await pool.connect();

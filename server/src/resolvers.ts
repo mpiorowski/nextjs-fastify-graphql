@@ -1,6 +1,7 @@
 import { IResolvers } from "mercurius";
+import { Category, Post, Topic } from "../../@types/forum.types";
 import { addCategory, getAllCategories, getCategoryById } from "./db/categories.db";
-import { addPost } from "./db/posts.db";
+import { addPost, getAllPostsByTopicId, getAllRepliesByPostId } from "./db/posts.db";
 import { addTopic, getAllTopicsByCategoryId, getTopicById } from "./db/topics.db";
 
 export const resolvers: IResolvers = {
@@ -10,23 +11,27 @@ export const resolvers: IResolvers = {
     category: async (_: unknown, { id }: { id: string }) => await getCategoryById(id),
     topic: async (_: unknown, { id }: { id: string }) => await getTopicById(id),
   },
-  // Category: {
-  //   topics: async (category) => await getAllTopicsByCategoryId(category.id),
-  // },
   Mutation: {
-    createCategory: async (_: unknown, data: { title: string; description: string }, context) =>
-      await addCategory(data, context),
-    createTopic: async (_: unknown, data: { categoryId: string; title: string; description: string }, context) =>
-      await addTopic(data, context),
-    createPost: async (_: unknown, data: { topicId: string; content: string; replyId: string }, context) =>
-      await addPost(data, context),
+    createCategory: async (_: unknown, data: Category, context) => await addCategory(data, context),
+    createTopic: async (_: unknown, data: Topic, context) => await addTopic(data, context),
+    createPost: async (_: unknown, data: Post, context) => await addPost(data, context),
   },
 };
 
 export const loaders = {
   Category: {
-    async topics(queries: any) {
-      return queries.map(async ({ obj }: { obj: any }) => await getAllTopicsByCategoryId(obj.id));
+    async topics(queries: { obj: Category }[]): Promise<unknown> {
+      return queries.map(async ({ obj }: { obj: Category }) => await getAllTopicsByCategoryId(obj.id as string));
+    },
+  },
+  Topic: {
+    async posts(queries: { obj: Topic }[]): Promise<unknown> {
+      return queries.map(async ({ obj }: { obj: Topic }) => await getAllPostsByTopicId(obj.id as string));
+    },
+  },
+  Post: {
+    async replies(queries: { obj: Post }[]): Promise<unknown> {
+      return queries.map(async ({ obj }: { obj: Post }) => await getAllRepliesByPostId(obj.id as string));
     },
   },
 };

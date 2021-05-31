@@ -1,51 +1,64 @@
-import { Box, Button, Flex, Grid, useDisclosure } from "@chakra-ui/react";
-import React, { useState } from "react";
-import { Category } from "../../../../@types/forum.types";
+import { Box, Button, Flex, Grid, Link as UiLink, useDisclosure } from "@chakra-ui/react";
+import { faComments, faPenAlt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Link from "next/link";
+import React, { Fragment } from "react";
 import { Pages } from "../Pages";
 import { useFindAllCategories } from "./@common/forumApis";
-import TopicsTable from "./categories/[categoryId]/TopicsTable";
 import { CategoryDrawer } from "./CategoryDrawer";
 
-export default function Categories() {
+export default function Categories(): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
 
-  const [activeCategory, setActiveCategory] = useState<Category | null>(null);
+  const { categories } = useFindAllCategories();
 
-  const { categoryData } = useFindAllCategories();
-  // const { topicData } = useFindTopicById(categoryId);
+  let postCount = 0;
+  categories.forEach((category) => category.topics.forEach((topic) => topic.posts.forEach(() => postCount++)));
+
   return (
     <Pages>
       <CategoryDrawer btnRef={btnRef} isOpen={isOpen} onClose={onClose} />
-      {/* <Flex justifyContent="right" p="5">
+      <Flex justifyContent="right" p="5">
         <Button ref={btnRef} onClick={onOpen} w="200px">
           Dodaj kategorię
         </Button>
-      </Flex> 
+      </Flex>
       <Grid
-        maxWidth="1000px"
+        width="60%"
         margin="auto"
         marginTop="40px"
+        gridTemplateColumns="1fr 200px"
         rowGap="0.5"
         paddingTop="0.5"
         paddingBottom="0.5"
         justifyContent="stretch"
         background="gray.500"
       >
-        {categoryData.map((category) => (
-          <Grid h="100px" background="gray.800" alignContent="center" key={category.id}>
-            <Link href={`/forum/categories/${category.id}/topics`}>
-              <UiLink fontSize="xl" color="green.400">
-                {category.title}
-              </UiLink>
-            </Link>
-            <Box fontSize="sm" color="gray.300">
-              {category.description}
-            </Box>
-          </Grid>
+        {categories.map((category) => (
+          <Fragment key={category.id}>
+            <Grid h="100px" background="gray.800" alignContent="center">
+              <Link href={`/forum/categories/${category.id}/topics`}>
+                <UiLink fontSize="xl" color="green.400">
+                  {category.title}
+                </UiLink>
+              </Link>
+              <Box fontSize="sm" color="gray.300">
+                {category.description}
+              </Box>
+            </Grid>
+            <Grid background="gray.800" alignContent="center">
+              <Box fontSize="large" color="gray.400">
+                <FontAwesomeIcon icon={faComments} /> {postCount || 0} posts
+              </Box>
+              <Box fontSize="large" color="gray.400">
+                <FontAwesomeIcon icon={faPenAlt} /> {category.topics.length || 0} topics
+              </Box>
+            </Grid>
+          </Fragment>
         ))}
-      </Grid> */}
-      <Grid templateColumns="250px 1fr" h="100vh">
+      </Grid>
+      {/* <Grid templateColumns="250px 1fr" h="100vh">
         <Box backgroundColor="gray.700">
           <Box p="4">
             <Button ref={btnRef} onClick={onOpen} w="100%">
@@ -53,7 +66,7 @@ export default function Categories() {
             </Button>
           </Box>
           <Grid direction="column" mt="10" backgroundColor="gray.500" rowGap="0.5" paddingTop="0.5" paddingBottom="0.5">
-            {categoryData.map((category) => (
+            {categories.map((category) => (
               <Grid
                 key={category.id}
                 onClick={() => setActiveCategory(category)}
@@ -79,7 +92,7 @@ export default function Categories() {
           </Grid>
         </Box>
         {activeCategory && <TopicsTable category={activeCategory}></TopicsTable>}
-      </Grid>
+      </Grid> */}
     </Pages>
   );
 }

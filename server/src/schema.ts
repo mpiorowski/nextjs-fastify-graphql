@@ -16,6 +16,7 @@ export const schema = `
     id: String
     title: String
     description: String
+    postsCount: Int
     topics: [Topic]
   }
 

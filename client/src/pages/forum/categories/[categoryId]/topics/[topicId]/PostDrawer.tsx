@@ -74,7 +74,7 @@ export const PostDrawer = ({ topicId, btnRef, isOpen, onClose, replyId }: Props)
           <DrawerOverlay />
           <DrawerContent>
             <DrawerCloseButton />
-            <DrawerHeader>Dodaj temat {replyId}</DrawerHeader>
+            <DrawerHeader>Dodaj post</DrawerHeader>
             <DrawerBody>
               <FormControl isInvalid={errors.content} h="120">
                 <FormLabel htmlFor="content">Treść</FormLabel>

@@ -6,12 +6,6 @@ export type Category = {
   icon?: string;
   userId?: string;
   topics: Topic[];
-  latestTopicUid?: string;
-  topicsNumber?: number;
-  postsNumber?: number;
-  latestPostDate?: string;
-  latestPostUid?: string;
-  latestTopic?: string;
 };
 
 export type Topic = {
