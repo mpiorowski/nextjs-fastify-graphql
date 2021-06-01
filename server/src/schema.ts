@@ -10,6 +10,7 @@ export const schema = `
     createCategory(title: String, description: String): Category
     createTopic(categoryId: String, title: String, description: String): Topic
     createPost(topicId: String, content: String, replyId: String): Post
+    createChat(content: String): Chat
   }
   
   type Category {
@@ -32,6 +33,11 @@ export const schema = `
     content: String
     replies: [Post]
     replyId: String
+  }
+
+  type Chat {
+    id: String
+    content: String
   }
 
   type User {

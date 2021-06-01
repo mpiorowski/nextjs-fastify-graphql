@@ -1,6 +1,8 @@
 import { IResolvers } from "mercurius";
+import { Chat } from "../../@types/chat.types";
 import { Category, Post, Topic } from "../../@types/forum.types";
 import { addCategory, countAllPostsByCategoryId, getAllCategories, getCategoryById } from "./db/categories.db";
+import { addChat } from "./db/chat.db";
 import { addPost, getAllPostsByTopicId, getAllRepliesByPostId } from "./db/posts.db";
 import { addTopic, getAllTopicsByCategoryId, getTopicById } from "./db/topics.db";
 
@@ -15,6 +17,7 @@ export const resolvers: IResolvers = {
     createCategory: async (_: unknown, data: Category, context) => await addCategory(data, context),
     createTopic: async (_: unknown, data: Topic, context) => await addTopic(data, context),
     createPost: async (_: unknown, data: Post, context) => await addPost(data, context),
+    createChat: async (_: unknown, data: Chat, context) => await addChat(data, context),
   },
 };
 
