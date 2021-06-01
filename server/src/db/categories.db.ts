@@ -2,13 +2,15 @@ import { MercuriusContext } from "mercurius";
 import { Pool } from "pg";
 import { Category } from "../../../@types/forum.types";
 
-export async function getAllCategories(): Promise<Category[]> {
+export async function getAllCategories(context: MercuriusContext): Promise<Category[]> {
+  const user = context.reply.request.user as { id: string };
   const pool = new Pool();
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
-    const queryText = "select * from forum_categories";
-    const res = await client.query(queryText);
+    // TODO - categories only for user that added it
+    const queryText = `select * from forum_categories where "userId" = $1`;
+    const res = await client.query(queryText, [user.id]);
     await client.query("COMMIT");
     return res.rows;
   } catch (e) {

@@ -7,7 +7,7 @@ import { addTopic, getAllTopicsByCategoryId, getTopicById } from "./db/topics.db
 export const resolvers: IResolvers = {
   Query: {
     hello: () => "Witam",
-    categories: async () => await getAllCategories(),
+    categories: async (_: unknown, _data: null, context) => await getAllCategories(context),
     category: async (_: unknown, { id }: { id: string }) => await getCategoryById(id),
     topic: async (_: unknown, { id }: { id: string }) => await getTopicById(id),
   },

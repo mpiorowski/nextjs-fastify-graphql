@@ -41,14 +41,14 @@ export async function getTopicById(topicId: string): Promise<Topic> {
   }
 }
 
-export async function addTopic(postData: any, context: MercuriusContext): Promise<Topic> {
+export async function addTopic(topic: Topic, context: MercuriusContext): Promise<Topic> {
   const user = context.reply.request.user as { id: string };
   const pool = new Pool();
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
     const queryText = `insert into forum_topics(title, description, "categoryId", "userId") values($1, $2, $3, '${user.id}') returning *`;
-    const res = await client.query(queryText, [postData.title, postData.description, postData.categoryId]);
+    const res = await client.query(queryText, [topic.title, topic.description, topic.categoryId]);
     await client.query("COMMIT");
     return res.rows[0];
   } catch (e) {
