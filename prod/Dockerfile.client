@@ -7,6 +7,9 @@ WORKDIR /usr/app/client
 
 COPY ./client/package.json ./package.json
 
+RUN apk add --update python make g++\
+  && rm -rf /var/cache/apk/*
+
 RUN yarn install --production
 
 COPY ./client/tsconfig.json ./tsconfig.json
