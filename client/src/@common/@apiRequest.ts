@@ -13,7 +13,8 @@ export const apiRequest = async <T>(options: Options): Promise<T> => {
   options = { ...defaults, ...options };
   const response = await fetch(options.url, options);
   if (!response.ok) {
-    handleError(await response.json());
+    const data = await response.json();
+    handleError(data.errors);
     return;
   }
   if (response.status === 204) {

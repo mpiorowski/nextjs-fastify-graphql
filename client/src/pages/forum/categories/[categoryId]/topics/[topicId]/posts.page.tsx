@@ -1,10 +1,10 @@
-import { Box, Button, Flex, Grid, useDisclosure } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
-import React, { useState } from 'react';
-import { Pages } from '../../../../../Pages';
-import { useFindTopicById } from '../../../../@common/forumApis';
-import PostContent from './PostContent';
-import { PostDrawer } from './PostDrawer';
+import { Button, Flex, Grid, useDisclosure } from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
+import { Pages } from "../../../../../Pages";
+import { useFindTopicById } from "../../../../@common/forumApis";
+import PostContent from "./PostContent";
+import { PostDrawer } from "./PostDrawer";
 
 export const Posts = () => {
   const router = useRouter();
@@ -15,7 +15,7 @@ export const Posts = () => {
 
   const [replyId, setReplyId] = useState<string | null>(null);
 
-  const { topicData } = useFindTopicById(topicId as string);
+  const { topic } = useFindTopicById(topicId as string);
 
   return (
     <Pages>
@@ -32,8 +32,16 @@ export const Posts = () => {
           Dodaj post
         </Button>
       </Flex>
-      <Grid width="80%" margin="auto" marginTop="40px" background="rgba(160, 155, 155, 0.329)" rowGap="0.5" paddingTop="0.5" paddingBottom="0.5">
-        {topicData?.posts.map((post) => (
+      <Grid
+        width="80%"
+        margin="auto"
+        marginTop="40px"
+        background="rgba(160, 155, 155, 0.329)"
+        rowGap="0.5"
+        paddingTop="0.5"
+        paddingBottom="0.5"
+      >
+        {topic?.posts.map((post) => (
           <PostContent post={post} onOpen={onOpen} setReplyId={() => setReplyId(post.id)} />
         ))}
       </Grid>

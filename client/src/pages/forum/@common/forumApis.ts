@@ -2,16 +2,12 @@ import { useQuery } from "react-query";
 import { Category, Post, Topic } from "../../../../../@types/forum.types";
 import { apiRequest } from "../../../@common/@apiRequest";
 
-// const apiFindAllCategories = (): Promise<{ data: { categories: Category[] } }> => {
-//   const query = `query { categories { id title description topics { title } } }`;
-//   return apiRequest({ url: `/api?query=${query}`, method: "GET" });
-// };
 export function useFindAllCategories(): {
   categories: Category[];
   isLoading: boolean;
   isError: boolean;
 } {
-  const query = `query { categories { id title description topics { title posts { id } } } }`;
+  const query = `query { categories { id title description postsCount topics { title } } }`;
   const { data, isLoading, isError } = useQuery("categories", () =>
     apiRequest<{ data: { categories: Category[] } }>({ url: `/api?query=${query}`, method: "GET" }),
   );
@@ -19,18 +15,19 @@ export function useFindAllCategories(): {
   return { categories, isLoading, isError };
 }
 
-const apiFindCategoryById = (categoryId: string): Promise<{ data: { category: Category } }> => {
-  const query = `query { category(id: "${categoryId}") { id title description topics { id title description postsCount} } }`;
-  return apiRequest({ url: `/api?query=${query}`, method: "GET" });
-};
 export function useFindCategoryById(categoryId: string): {
   categoryData: Category;
   isLoading: boolean;
   isError: boolean;
 } {
-  const { data, isLoading, isError } = useQuery(["category", categoryId], () => apiFindCategoryById(categoryId), {
-    enabled: !!categoryId,
-  });
+  const query = `query { category(id: "${categoryId}") { id title description topics { id title description posts { id replies { id } } } } }`;
+  const { data, isLoading, isError } = useQuery(
+    ["category", categoryId],
+    () => apiRequest<{ data: { category: Category } }>({ url: `/api?query=${query}`, method: "GET" }),
+    {
+      enabled: !!categoryId,
+    },
+  );
   const categoryData = data?.data.category || null;
   return { categoryData, isLoading, isError };
 }
@@ -46,7 +43,11 @@ export const apiAddCategory = (category: Category): Promise<Category & { errors:
   return apiRequest({ url: `/api`, method: "POST", body: JSON.stringify({ query: query }) });
 };
 
-const apiFindTopicyById = (topicId: string): Promise<{ data: { topic: Topic } }> => {
+export function useFindTopicById(topicId: string): {
+  topic: Topic;
+  isLoading: boolean;
+  isError: boolean;
+} {
   const query = `
   query {
     topic(id: "${topicId}") {
@@ -64,14 +65,15 @@ const apiFindTopicyById = (topicId: string): Promise<{ data: { topic: Topic } }>
     }
   }
   `;
-  return apiRequest({ url: `/api?query=${query}`, method: "GET" });
-};
-export function useFindTopicById(topicId: string) {
-  const { data, isLoading, isError } = useQuery(["topic", topicId], () => apiFindTopicyById(topicId), {
-    enabled: !!topicId,
-  });
-  const topicData = data?.data.topic;
-  return { topicData, isLoading, isError };
+  const { data, isLoading, isError } = useQuery(
+    ["topic", topicId],
+    () => apiRequest<{ data: { topic: Topic } }>({ url: `/api?query=${query}`, method: "GET" }),
+    {
+      enabled: !!topicId,
+    },
+  );
+  const topic = data?.data.topic;
+  return { topic, isLoading, isError };
 }
 
 export const apiAddTopic = (topic: Topic): Promise<Topic & { errors: Error[] }> => {

@@ -13,8 +13,8 @@ export default function Categories(): JSX.Element {
 
   const { categories } = useFindAllCategories();
 
-  let postCount = 0;
-  categories.forEach((category) => category.topics.forEach((topic) => topic.posts.forEach(() => postCount++)));
+  // let postCount = 0;
+  // categories.forEach((category) => category.topics.forEach((topic) => topic.posts.forEach(() => postCount++)));
 
   return (
     <Pages>
@@ -49,7 +49,7 @@ export default function Categories(): JSX.Element {
             </Grid>
             <Grid background="gray.800" alignContent="center">
               <Box fontSize="large" color="gray.400">
-                <FontAwesomeIcon icon={faComments} /> {postCount || 0} posts
+                <FontAwesomeIcon icon={faComments} /> {category.postsCount || 0} posts
               </Box>
               <Box fontSize="large" color="gray.400">
                 <FontAwesomeIcon icon={faPenAlt} /> {category.topics.length || 0} topics

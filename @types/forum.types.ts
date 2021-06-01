@@ -6,6 +6,7 @@ export type Category = {
   icon?: string;
   userId?: string;
   topics: Topic[];
+  postsCount: number;
 };
 
 export type Topic = {

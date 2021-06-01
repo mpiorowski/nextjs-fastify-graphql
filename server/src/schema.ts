@@ -24,7 +24,6 @@ export const schema = `
     id: String
     title: String
     description: String
-    postsCount: Int
     posts: [Post]
   }
 

@@ -1,6 +1,6 @@
 import { IResolvers } from "mercurius";
 import { Category, Post, Topic } from "../../@types/forum.types";
-import { addCategory, getAllCategories, getCategoryById } from "./db/categories.db";
+import { addCategory, countAllPostsByCategoryId, getAllCategories, getCategoryById } from "./db/categories.db";
 import { addPost, getAllPostsByTopicId, getAllRepliesByPostId } from "./db/posts.db";
 import { addTopic, getAllTopicsByCategoryId, getTopicById } from "./db/topics.db";
 
@@ -22,6 +22,9 @@ export const loaders = {
   Category: {
     async topics(queries: { obj: Category }[]): Promise<unknown> {
       return queries.map(async ({ obj }: { obj: Category }) => await getAllTopicsByCategoryId(obj.id as string));
+    },
+    async postsCount(queries: { obj: Category }[]): Promise<unknown> {
+      return queries.map(async ({ obj }: { obj: Category }) => await countAllPostsByCategoryId(obj.id as string));
     },
   },
   Topic: {

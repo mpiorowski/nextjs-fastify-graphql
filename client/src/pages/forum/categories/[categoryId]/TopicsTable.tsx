@@ -15,7 +15,7 @@ type Props = {
   category: Category;
 };
 
-export default function TopicsTable({ category }: Props) {
+export default function TopicsTable({ category }: Props): JSX.Element {
   const columns = React.useMemo(
     () => [
       {
@@ -39,7 +39,20 @@ export default function TopicsTable({ category }: Props) {
     ],
     [category],
   );
-  const tableData = React.useMemo(() => (category ? [...category.topics] : []), [category]);
+  const tableData = React.useMemo(() => {
+    const topics = category ? [...category.topics] : [];
+
+    const topicsWithPostsCount = topics.map((topic) => {
+      let count = 0;
+      topic.posts.forEach((post) => {
+        count++;
+        count = count + post.replies.length;
+      });
+      return { ...topic, postsCount: count };
+    });
+
+    return topicsWithPostsCount;
+  }, [category]);
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
     { columns, data: tableData },
     useSortBy,
@@ -76,7 +89,7 @@ export default function TopicsTable({ category }: Props) {
           return (
             <Tr {...row.getRowProps()}>
               {row.cells.map((cell) => {
-                const column = cell.column as ColumnInstance<any> & ColumnData;
+                const column = cell.column as ColumnInstance & ColumnData;
                 return (
                   <Td {...cell.getCellProps()} isNumeric={column.isNumeric}>
                     {cell.render("Cell")}

@@ -2,7 +2,7 @@ import { MercuriusContext } from "mercurius";
 import { Pool } from "pg";
 import { Category } from "../../../@types/forum.types";
 
-export async function getAllCategories() {
+export async function getAllCategories(): Promise<Category[]> {
   const pool = new Pool();
   const client = await pool.connect();
   try {
@@ -24,18 +24,11 @@ export async function getCategoryById(categoryId: string): Promise<Category[]> {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
-    let queryText = `select * from forum_categories where id = '${categoryId}'`;
-    let res = await client.query(queryText);
+    const queryText = `select * from forum_categories where id = '${categoryId}'`;
+    const res = await client.query(queryText);
     const category = res.rows[0];
-    queryText = `select ft.*, (select count(*) from forum_posts fp where fp."topicId" = ft.id) as "postsCount" from forum_topics ft where ft."categoryId" = '${categoryId}'`;
-    res = await client.query(queryText);
-    const topics = res.rows;
-    const response = {
-      ...category,
-      topics: topics,
-    };
     await client.query("COMMIT");
-    return response;
+    return category;
   } catch (e) {
     await client.query("ROLLBACK");
     throw e;
@@ -44,13 +37,13 @@ export async function getCategoryById(categoryId: string): Promise<Category[]> {
   }
 }
 
-export async function addCategory(categoryData: any, context: MercuriusContext): Promise<Category> {
+export async function addCategory(category: Category, context: MercuriusContext): Promise<Category> {
   const user = context.reply.request.user as { id: string };
   const pool = new Pool();
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
-    const queryText = `insert into forum_categories(title, description, icon, "userId") values('${categoryData.title}', '${categoryData.description}', 'icon', '${user.id}') returning *`;
+    const queryText = `insert into forum_categories(title, description, icon, "userId") values('${category.title}', '${category.description}', 'icon', '${user.id}') returning *`;
     console.log(queryText);
     const res = await client.query(queryText);
     await client.query("COMMIT");
@@ -58,6 +51,24 @@ export async function addCategory(categoryData: any, context: MercuriusContext):
   } catch (e) {
     await client.query("ROLLBACK");
     console.error(e);
+    throw e;
+  } finally {
+    client.release();
+  }
+}
+
+export async function countAllPostsByCategoryId(categoryId: string): Promise<string> {
+  const pool = new Pool();
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const queryText = `select count(*) as "postsCount" from forum_categories fc join forum_topics ft on fc.id = ft."categoryId" join forum_posts fp on ft.id = fp."topicId" where fc.id = $1`;
+    const res = await client.query(queryText, [categoryId]);
+    await client.query("COMMIT");
+    const postsCount = res.rows[0] as { postsCount: string };
+    return postsCount.postsCount;
+  } catch (e) {
+    await client.query("ROLLBACK");
     throw e;
   } finally {
     client.release();
