@@ -8,7 +8,7 @@ import { w3cwebsocket as W3CWebSocket } from "websocket";
 import "../styles/globals.css";
 
 // TODO - add authprization
-const subscriptionClient = new SubscriptionClient("ws://server:4000/graphql", { reconnect: true }, W3CWebSocket);
+const subscriptionClient = new SubscriptionClient(`ws://server:4000/graphql`, { reconnect: true }, W3CWebSocket);
 
 const client = createClient({
   url: "http://localhost:3000/api",
