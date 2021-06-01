@@ -2,8 +2,24 @@ import { ChakraProvider, ColorModeProvider } from "@chakra-ui/react";
 import type { AppProps } from "next/app";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { Hydrate } from "react-query/hydration";
+import { SubscriptionClient } from "subscriptions-transport-ws";
+import { createClient, defaultExchanges, Provider, subscriptionExchange } from "urql";
+import { w3cwebsocket as W3CWebSocket } from "websocket";
 import "../styles/globals.css";
+
+const subscriptionClient = new SubscriptionClient("ws://localhost:4000/graphql", { reconnect: true }, W3CWebSocket);
+
+const client = createClient({
+  url: "http://localhost:3000/api",
+  exchanges: [
+    ...defaultExchanges,
+    subscriptionExchange({
+      forwardSubscription(operation) {
+        return subscriptionClient.request(operation);
+      },
+    }),
+  ],
+});
 
 function MyApp({ Component, pageProps }: AppProps) {
   const queryClientRef = React.useRef<QueryClient>();
@@ -18,9 +34,10 @@ function MyApp({ Component, pageProps }: AppProps) {
       },
     });
   }
+
   return (
-    <QueryClientProvider client={queryClientRef.current}>
-      <Hydrate state={pageProps.dehydratedState}>
+    <Provider value={client}>
+      <QueryClientProvider client={queryClientRef.current}>
         <ChakraProvider>
           <ColorModeProvider
             options={{
@@ -31,8 +48,8 @@ function MyApp({ Component, pageProps }: AppProps) {
             <Component {...pageProps} />
           </ColorModeProvider>
         </ChakraProvider>
-      </Hydrate>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </Provider>
   );
 }
 

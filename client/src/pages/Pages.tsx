@@ -1,6 +1,6 @@
 import { Box, Grid } from "@chakra-ui/layout";
 import { Center, Tooltip } from "@chakra-ui/react";
-import { faComments, faHome, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import { faComments, faHeadset, faHome, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -75,6 +75,19 @@ export const Pages: React.FC<Props> = ({ children }: Props) => {
               backgroundColor={activeUrl === "forum" && "gray.600"}
             >
               <FontAwesomeIcon icon={faComments} size="lg" />
+            </Center>
+          </Link>
+        </Tooltip>
+        <Tooltip label="Chat" aria-label="chat-tooltip" placement="right" shouldWrapChildren>
+          <Link href="/chat">
+            <Center
+              h="40px"
+              _hover={{ color: "gray.400", cursor: "pointer" }}
+              m="2"
+              borderRadius="4"
+              backgroundColor={activeUrl === "chat" && "gray.600"}
+            >
+              <FontAwesomeIcon icon={faHeadset} size="lg" />
             </Center>
           </Link>
         </Tooltip>
