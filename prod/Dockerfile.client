@@ -1,5 +1,5 @@
 # Stage 1 - Create a builder container
-FROM node:15-alpine
+FROM node:16.2-alpine
 
 WORKDIR /usr/app
 COPY ./@types ./@types
