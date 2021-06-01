@@ -1,14 +1,11 @@
 # Stage 1 - Create a builder container
-FROM node:16.2-alpine
+FROM node:16.2
 
 WORKDIR /usr/app
 COPY ./@types ./@types
 WORKDIR /usr/app/client
 
 COPY ./client/package.json ./package.json
-
-RUN apk add --update python make g++\
-  && rm -rf /var/cache/apk/*
 
 RUN yarn install --production
 
