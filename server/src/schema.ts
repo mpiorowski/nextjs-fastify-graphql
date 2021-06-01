@@ -12,6 +12,10 @@ export const schema = `
     createPost(topicId: String, content: String, replyId: String): Post
     createChat(content: String): Chat
   }
+
+  type Subscription {
+    newestChat: Chat
+  }
   
   type Category {
     id: String

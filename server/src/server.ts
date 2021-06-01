@@ -23,7 +23,7 @@ app.register(fastifyJWT, {
   trusted: validateToken,
 });
 async function validateToken(_request: FastifyRequest, decodedToken: any) {
-  // todo - finish blacklisting
+  // TODO - finish blacklisting
   const denylist = ["token1", "token2"];
   return !denylist.includes(decodedToken.name);
 }
@@ -49,6 +49,7 @@ app.register(mercurius, {
   resolvers: resolvers,
   loaders: loaders,
   graphiql: true,
+  subscription: true,
 });
 
 app.setErrorHandler(function (error, _request, reply) {
