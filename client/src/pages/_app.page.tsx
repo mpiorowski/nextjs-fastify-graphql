@@ -7,7 +7,7 @@ import { createClient, defaultExchanges, Provider, subscriptionExchange } from "
 import { w3cwebsocket } from "websocket";
 import "../styles/globals.css";
 
-const subscriptionClient = new SubscriptionClient("ws://localhost:4000/graphql", { reconnect: true }, w3cwebsocket);
+const subscriptionClient = new SubscriptionClient("ws://server:4000/graphql", { reconnect: true }, w3cwebsocket);
 
 const client = createClient({
   url: "/api",
