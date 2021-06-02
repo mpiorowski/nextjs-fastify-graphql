@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import Fastify, { FastifyReply, FastifyRequest } from "fastify";
 import fastifyCookie from "fastify-cookie";
+import cors from "fastify-cors";
 import fastifyJWT from "fastify-jwt";
 import mercurius from "mercurius";
 import authRoutes from "./auth/auth.routes";
@@ -10,6 +11,10 @@ dotenv.config();
 
 const app = Fastify({
   logger: true,
+});
+
+app.register(cors, {
+  origin: "*",
 });
 
 // jwt auth
