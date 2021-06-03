@@ -1,29 +1,31 @@
+import { gql, useSubscription } from "@apollo/client";
 import { Button, Flex, FormControl, FormErrorMessage, FormLabel, Grid, Textarea } from "@chakra-ui/react";
 import React, { ReactElement, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
-import { useSubscription } from "urql";
 import { Chat } from "../../../../@types/chat.types";
 import { handleError } from "../../@common/@handleError";
 import { Pages } from "../Pages";
 import { apiAddChat } from "./@common/chatApis";
 
-const payload = `
+const COMMENTS_SUBSCRIPTION = gql`
   subscription {
     newestChat {
       id
       content
     }
-  } 
+  }
 `;
 const ChatPage = (): ReactElement => {
   // subscription
-  const [subscription] = useSubscription<{ newestChat: Chat }>({ query: payload });
-  const data = subscription?.data?.newestChat;
+  const { data, loading } = useSubscription(COMMENTS_SUBSCRIPTION);
+
+  console.log(data);
+
   const [chatList, setChatList] = useState<Chat[]>([]);
 
   useEffect(() => {
-    setChatList([data].concat(chatList));
+    data?.newestChat && setChatList([data.newestChat].concat(chatList));
   }, [data]);
 
   // form setup

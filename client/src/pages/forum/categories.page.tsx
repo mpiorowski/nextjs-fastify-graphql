@@ -1,20 +1,40 @@
+import { gql, useQuery } from "@apollo/client";
 import { Box, Button, Flex, Grid, Link as UiLink, useDisclosure } from "@chakra-ui/react";
 import { faComments, faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import React, { Fragment } from "react";
+import { Category } from "../../../../@types/forum.types";
 import { Pages } from "../Pages";
-import { useFindAllCategories } from "./@common/forumApis";
 import { CategoryDrawer } from "./CategoryDrawer";
+
+const CategoriesGQL = gql`
+  query {
+    categories {
+      id
+      title
+      description
+      postsCount
+      topics {
+        title
+      }
+    }
+  }
+`;
 
 export default function Categories(): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
 
-  const { categories } = useFindAllCategories();
+  // const { categories } = useFindAllCategories();
 
-  // let postCount = 0;
-  // categories.forEach((category) => category.topics.forEach((topic) => topic.posts.forEach(() => postCount++)));
+  const { loading, error, data } = useQuery<{ categories: Category[] }>(CategoriesGQL);
+
+  if (loading) {
+    return <div>Loading</div>;
+  }
+
+  // console.log(categories);
 
   return (
     <Pages>
@@ -35,7 +55,7 @@ export default function Categories(): JSX.Element {
         justifyContent="stretch"
         background="gray.500"
       >
-        {categories.map((category) => (
+        {data.categories.map((category) => (
           <Fragment key={category.id}>
             <Grid h="100px" background="gray.800" alignContent="center">
               <Link href={`/forum/categories/${category.id}/topics`}>

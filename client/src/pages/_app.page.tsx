@@ -1,31 +1,41 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache, split } from "@apollo/client";
+import { getMainDefinition } from "@apollo/client/utilities";
+import { WebSocketLink } from "@apollo/link-ws";
 import { ChakraProvider, ColorModeProvider } from "@chakra-ui/react";
 import type { AppProps } from "next/app";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { Provider } from "urql";
+import { w3cwebsocket } from "websocket";
 import "../styles/globals.css";
 
-// const subscriptionClient = new SubscriptionClient(
-//   "ws://localhost:4000/api/ws/graphql",
-//   { reconnect: true },
-//   w3cwebsocket,
-// );
+const httpLink = new HttpLink({
+  uri: "http://localhost:3000/api/graphql",
+});
 
-// const client = createClient({
-//   url: "http://localhost:3000/api/ws/graphql",
-//   exchanges: [
-//     ...defaultExchanges,
-//     subscriptionExchange({
-//       forwardSubscription(operation) {
-//         return subscriptionClient.request(operation);
-//       },
-//     }),
-//   ],
-// });
+const wsLink = new WebSocketLink({
+  uri: "ws://localhost:3000/api/graphql",
+  options: {
+    reconnect: true,
+  },
+  webSocketImpl: w3cwebsocket,
+});
+
+// The split function takes three parameters:
+//
+// * A function that's called for each operation to execute
+// * The Link to use for an operation if the function returns a "truthy" value
+// * The Link to use for an operation if the function returns a "falsy" value
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return definition.kind === "OperationDefinition" && definition.operation === "subscription";
+  },
+  wsLink,
+  httpLink,
+);
 
 const client = new ApolloClient({
-  uri: "/api/proxy/graphql",
+  link: splitLink,
   cache: new InMemoryCache(),
 });
 
@@ -44,7 +54,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   }
 
   return (
-    <Provider value={client}>
+    <ApolloProvider client={client}>
       <QueryClientProvider client={queryClientRef.current}>
         <ChakraProvider>
           <ColorModeProvider
@@ -57,7 +67,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           </ColorModeProvider>
         </ChakraProvider>
       </QueryClientProvider>
-    </Provider>
+    </ApolloProvider>
   );
 }
 
