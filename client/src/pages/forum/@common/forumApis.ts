@@ -9,7 +9,7 @@ export function useFindAllCategories(): {
 } {
   const query = `query { categories { id title description postsCount topics { title } } }`;
   const { data, isLoading, isError } = useQuery("categories", () =>
-    apiRequest<{ data: { categories: Category[] } }>({ url: `/api?query=${query}`, method: "GET" }),
+    apiRequest<{ data: { categories: Category[] } }>({ url: `/graphql?query=${query}`, method: "GET" }),
   );
   const categories = data?.data.categories || [];
   return { categories, isLoading, isError };
@@ -23,7 +23,7 @@ export function useFindCategoryById(categoryId: string): {
   const query = `query { category(id: "${categoryId}") { id title description topics { id title description posts { id replies { id } } } } }`;
   const { data, isLoading, isError } = useQuery(
     ["category", categoryId],
-    () => apiRequest<{ data: { category: Category } }>({ url: `/api?query=${query}`, method: "GET" }),
+    () => apiRequest<{ data: { category: Category } }>({ url: `/graphql?query=${query}`, method: "GET" }),
     {
       enabled: !!categoryId,
     },
@@ -40,7 +40,7 @@ export const apiAddCategory = (category: Category): Promise<Category & { errors:
     }
   }
   `;
-  return apiRequest({ url: `/api`, method: "POST", body: JSON.stringify({ query: query }) });
+  return apiRequest({ url: `/graphql`, method: "POST", body: JSON.stringify({ query: query }) });
 };
 
 export function useFindTopicById(topicId: string): {
@@ -67,7 +67,7 @@ export function useFindTopicById(topicId: string): {
   `;
   const { data, isLoading, isError } = useQuery(
     ["topic", topicId],
-    () => apiRequest<{ data: { topic: Topic } }>({ url: `/api?query=${query}`, method: "GET" }),
+    () => apiRequest<{ data: { topic: Topic } }>({ url: `/graphql?query=${query}`, method: "GET" }),
     {
       enabled: !!topicId,
     },
@@ -84,7 +84,7 @@ export const apiAddTopic = (topic: Topic): Promise<Topic & { errors: Error[] }> 
     }
   }
   `;
-  return apiRequest({ url: `/api`, method: "POST", body: JSON.stringify({ query: query }) });
+  return apiRequest({ url: `/graphql`, method: "POST", body: JSON.stringify({ query: query }) });
 };
 
 export const apiAddPost = (post: Post): Promise<Post & { errors: Error[] }> => {
@@ -97,5 +97,5 @@ export const apiAddPost = (post: Post): Promise<Post & { errors: Error[] }> => {
     }
   }
   `;
-  return apiRequest({ url: `/api`, method: "POST", body: JSON.stringify({ query: query }) });
+  return apiRequest({ url: `/graphql`, method: "POST", body: JSON.stringify({ query: query }) });
 };
