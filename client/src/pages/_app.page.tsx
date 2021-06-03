@@ -1,24 +1,32 @@
+import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { ChakraProvider, ColorModeProvider } from "@chakra-ui/react";
 import type { AppProps } from "next/app";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { SubscriptionClient } from "subscriptions-transport-ws";
-import { createClient, defaultExchanges, Provider, subscriptionExchange } from "urql";
-import { w3cwebsocket } from "websocket";
+import { Provider } from "urql";
 import "../styles/globals.css";
 
-const subscriptionClient = new SubscriptionClient("ws://server:4000/graphql", { reconnect: true }, w3cwebsocket);
+// const subscriptionClient = new SubscriptionClient(
+//   "ws://localhost:4000/api/ws/graphql",
+//   { reconnect: true },
+//   w3cwebsocket,
+// );
 
-const client = createClient({
-  url: "/api",
-  exchanges: [
-    ...defaultExchanges,
-    subscriptionExchange({
-      forwardSubscription(operation) {
-        return subscriptionClient.request(operation);
-      },
-    }),
-  ],
+// const client = createClient({
+//   url: "http://localhost:3000/api/ws/graphql",
+//   exchanges: [
+//     ...defaultExchanges,
+//     subscriptionExchange({
+//       forwardSubscription(operation) {
+//         return subscriptionClient.request(operation);
+//       },
+//     }),
+//   ],
+// });
+
+const client = new ApolloClient({
+  uri: "/api/proxy/graphql",
+  cache: new InMemoryCache(),
 });
 
 function MyApp({ Component, pageProps }: AppProps) {

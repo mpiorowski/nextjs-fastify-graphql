@@ -17,7 +17,7 @@ export default function Login(): JSX.Element {
   const onSubmit = async (values: { email: string }) => {
     try {
       await apiRequest({
-        url: `/auth/login`,
+        url: `/api/auth/login`,
         method: "POST",
         body: JSON.stringify(values),
       });

@@ -10,7 +10,7 @@ export default function Login(): JSX.Element {
   useEffect(() => {
     if (query.token) {
       apiRequest({
-        url: `/auth/token`,
+        url: `/api/auth/token`,
         method: "POST",
         body: JSON.stringify(query.token),
       }).then((response) => {
