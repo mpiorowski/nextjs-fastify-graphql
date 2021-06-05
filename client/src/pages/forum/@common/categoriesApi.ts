@@ -1,18 +1,29 @@
-import { ApolloError, gql, useQuery } from "@apollo/client";
+import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import { Category, Post, Topic } from "../../../../../@types/forum.types";
 import { apiRequest } from "../../../@common/@apiRequest";
 
 export function useFindAllCategories(): {
   categories: Category[];
-  isLoading: boolean;
-  isError: boolean;
+  loading: boolean;
+  error: ApolloError;
+  refetch: () => void;
 } {
-  const query = `query { categories { id title description postsCount topics { title } } }`;
-  const { data, isLoading, isError } = useQuery("categories", () =>
-    apiRequest<{ data: { categories: Category[] } }>({ url: `/api/proxy/graphql?query=${query}`, method: "GET" }),
-  );
-  const categories = data?.data.categories || [];
-  return { categories, isLoading, isError };
+  const CATEGORIES_GQL = gql`
+    query {
+      categories {
+        id
+        title
+        description
+        postsCount
+        topics {
+          title
+        }
+      }
+    }
+  `;
+  const { data, loading, error, refetch } = useQuery(CATEGORIES_GQL);
+  const categories = data?.categories || [];
+  return { categories, loading, error, refetch };
 }
 
 export function useFindCategoryById(categoryId: string): {
@@ -46,15 +57,18 @@ export function useFindCategoryById(categoryId: string): {
   return { categoryData, loading, error };
 }
 
-export const apiAddCategory = (category: Category): Promise<Category & { errors: Error[] }> => {
-  const query = `
-  mutation {
-    createCategory(title: "${category.title}", description: "${category.description}") {
-      title, description, id
+export const ADD_CATEGORY_GQL = gql`
+  mutation CreateCategory($title: String, $description: String) {
+    createCategory(title: $title, description: $description) {
+      id
+      title
+      description
     }
   }
-  `;
-  return apiRequest({ url: `/api/proxy/graphql`, method: "POST", body: JSON.stringify({ query: query }) });
+`;
+export const useAddCategory = () => {
+  const [mutate, { loading, error, data }] = useMutation(ADD_CATEGORY_GQL);
+  return { mutate, loading, error, data };
 };
 
 export function useFindTopicById(topicId: string): {

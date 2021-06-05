@@ -2,7 +2,7 @@ import { Button, Flex, Grid, useDisclosure } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { Pages } from "../../../../../Pages";
-import { useFindTopicById } from "../../../../@common/forumApis";
+import { useFindTopicById } from "../../../../@common/categoriesApi";
 import PostContent from "./PostContent";
 import { PostDrawer } from "./PostDrawer";
 

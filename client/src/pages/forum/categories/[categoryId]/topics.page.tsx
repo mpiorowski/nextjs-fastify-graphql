@@ -2,7 +2,7 @@ import { Button, Flex, useDisclosure } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React from "react";
 import { Pages } from "../../../Pages";
-import { useFindCategoryById } from "../../@common/forumApis";
+import { useFindCategoryById } from "../../@common/categoriesApi";
 import { TopicDrawer } from "./TopicDrawer";
 import TopicsTable from "./TopicsTable";
 

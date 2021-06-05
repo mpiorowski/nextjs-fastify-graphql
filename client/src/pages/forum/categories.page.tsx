@@ -1,42 +1,29 @@
-import { gql, useQuery } from "@apollo/client";
 import { Box, Button, Flex, Grid, Link as UiLink, useDisclosure } from "@chakra-ui/react";
 import { faComments, faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import React, { Fragment } from "react";
-import { Category } from "../../../../@types/forum.types";
 import { Pages } from "../Pages";
+import { useFindAllCategories } from "./@common/categoriesApi";
 import { CategoryDrawer } from "./CategoryDrawer";
-
-const CategoriesGQL = gql`
-  query {
-    categories {
-      id
-      title
-      description
-      postsCount
-      topics {
-        title
-      }
-    }
-  }
-`;
 
 export default function Categories(): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
 
-  const { loading, error, data } = useQuery<{ categories: Category[] }>(CategoriesGQL);
+  const { loading, error, categories, refetch } = useFindAllCategories();
+
+  if (loading) {
+    return <div>{loading}</div>;
+  }
 
   if (error) {
     return <div>{error}</div>;
   }
 
-  const categories = data?.categories || [];
-
   return (
     <Pages>
-      <CategoryDrawer btnRef={btnRef} isOpen={isOpen} onClose={onClose} />
+      <CategoryDrawer btnRef={btnRef} isOpen={isOpen} onClose={onClose} refetch={refetch} />
       <Flex justifyContent="right" p="5">
         <Button ref={btnRef} onClick={onOpen} w="200px">
           Dodaj kategorię

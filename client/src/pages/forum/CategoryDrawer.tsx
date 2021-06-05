@@ -13,35 +13,35 @@ import {
   Input,
   Textarea,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { ReactElement } from "react";
 import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "react-query";
-import { handleError } from "../../@common/@handleError";
-import { apiAddCategory } from "./@common/forumApis";
 import { Category } from "../../../../@types/forum.types";
+import { handleError } from "../../@common/@handleError";
+import { useAddCategory } from "./@common/categoriesApi";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   btnRef: React.MutableRefObject<undefined>;
+  refetch: () => void;
 }
 
-export const CategoryDrawer = ({ btnRef, isOpen, onClose }: Props) => {
-  const cache = useQueryClient();
+export const CategoryDrawer = ({ btnRef, isOpen, onClose, refetch }: Props): ReactElement => {
   const {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
   } = useForm();
 
-  const addCategory = useMutation((category: Category) => apiAddCategory(category));
+  const addCategory = useAddCategory();
+
   const onSubmit = async (values: Category) => {
     try {
-      const response = await addCategory.mutateAsync(values);
-      if (response?.errors) {
-        throw response.errors;
+      addCategory.mutate({ variables: values });
+      if (addCategory?.error) {
+        throw addCategory.error;
       }
-      cache.refetchQueries("categories");
+      refetch();
       onClose();
     } catch (error) {
       console.error(error);

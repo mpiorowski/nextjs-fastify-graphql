@@ -16,9 +16,9 @@ import {
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
-import { handleError } from "../../../../@common/@handleError";
-import { apiAddTopic } from "../../@common/forumApis";
 import { Topic } from "../../../../../../@types/forum.types";
+import { handleError } from "../../../../@common/@handleError";
+import { apiAddTopic } from "../../@common/categoriesApi";
 
 interface Props {
   categoryId: string;
