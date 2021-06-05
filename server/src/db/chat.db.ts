@@ -1,9 +1,8 @@
-import { MercuriusContext } from "mercurius";
 import { Pool } from "pg";
 import { Chat } from "../../../@types/chat.types";
 
-export async function addChat(chat: Chat, context: MercuriusContext): Promise<Chat> {
-  const user = context.reply.request.user as { id: string };
+export async function addChat(chat: Chat, context: any): Promise<Chat> {
+  const user = context.request.user as { id: string };
   const pool = new Pool();
   const client = await pool.connect();
   try {
@@ -21,8 +20,8 @@ export async function addChat(chat: Chat, context: MercuriusContext): Promise<Ch
   }
 }
 
-export async function getAllChats(context: MercuriusContext): Promise<Chat[]> {
-  const user = context.reply.request.user as { id: string };
+export async function getAllChats(context: any): Promise<Chat[]> {
+  const user = context.request.user as { id: string };
   const pool = new Pool();
   const client = await pool.connect();
   try {

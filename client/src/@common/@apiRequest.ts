@@ -11,7 +11,7 @@ export const apiRequest = async <T>(options: Options): Promise<T> => {
   });
   const defaults = { headers };
   options = { ...defaults, ...options };
-  const response = await fetch(options.url, options);
+  const response = await fetch(`/api${options.url}`, options);
   if (!response.ok) {
     const data = await response.json();
     handleError(data.errors);

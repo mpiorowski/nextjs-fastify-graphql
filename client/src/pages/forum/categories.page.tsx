@@ -4,17 +4,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import React, { Fragment } from "react";
 import { Pages } from "../Pages";
-import { useFindAllCategories } from "./@common/forumApis";
+import { useFindAllCategories } from "./@common/categories.api";
 import { CategoryDrawer } from "./CategoryDrawer";
 
 export default function Categories(): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
 
-  const { categories } = useFindAllCategories();
-
-  // let postCount = 0;
-  // categories.forEach((category) => category.topics.forEach((topic) => topic.posts.forEach(() => postCount++)));
+  const { fetching, error, response } = useFindAllCategories();
 
   return (
     <Pages>
@@ -35,7 +32,7 @@ export default function Categories(): JSX.Element {
         justifyContent="stretch"
         background="gray.500"
       >
-        {categories.map((category) => (
+        {response.map((category) => (
           <Fragment key={category.id}>
             <Grid h="100px" background="gray.800" alignContent="center">
               <Link href={`/forum/categories/${category.id}/topics`}>

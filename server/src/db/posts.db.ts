@@ -1,4 +1,3 @@
-import { MercuriusContext } from "mercurius";
 import { Pool } from "pg";
 import { Post } from "../../../@types/forum.types";
 
@@ -38,8 +37,8 @@ export async function getAllRepliesByPostId(postId: string): Promise<Post[]> {
   }
 }
 
-export async function addPost(post: Post, context: MercuriusContext): Promise<Post> {
-  const user = context.reply.request.user as { id: string };
+export async function addPost(post: Post, context: any): Promise<Post> {
+  const user = context.request.user as { id: string };
   const pool = new Pool();
   const client = await pool.connect();
   try {

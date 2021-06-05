@@ -14,10 +14,10 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "react-query";
+import { useQueryClient } from "react-query";
 import { Post } from "../../../../../../../../@types/forum.types";
 import { handleError } from "../../../../../../@common/@handleError";
-import { apiAddPost } from "../../../../@common/forumApis";
+import { useAddPost } from "../../../../@common/posts.api";
 
 interface Props {
   topicId: string;
@@ -27,7 +27,7 @@ interface Props {
   replyId: string | null;
 }
 
-export const PostDrawer = ({ topicId, btnRef, isOpen, onClose, replyId }: Props) => {
+export const PostDrawer: React.FC<Props> = ({ topicId, btnRef, isOpen, onClose, replyId }: Props) => {
   const cache = useQueryClient();
   const {
     handleSubmit,
@@ -42,13 +42,13 @@ export const PostDrawer = ({ topicId, btnRef, isOpen, onClose, replyId }: Props)
     };
   }, [isOpen]);
 
-  const addPost = useMutation((post: Post) => apiAddPost(post));
+  const addPost = useAddPost();
   const onSubmit = async (values: Post) => {
     try {
       const request = { ...values, topicId: topicId, replyId: replyId || null };
-      const response = await addPost.mutateAsync(request);
-      if (response?.errors) {
-        throw response.errors;
+      const response = await addPost.mutate(request);
+      if (response?.error) {
+        throw response.error;
       }
       cache.refetchQueries(["topic", topicId]);
       onClose();

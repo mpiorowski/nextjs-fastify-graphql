@@ -1,20 +1,15 @@
+import { ApolloServer } from "apollo-server-fastify";
 import dotenv from "dotenv";
 import Fastify, { FastifyReply, FastifyRequest } from "fastify";
 import fastifyCookie from "fastify-cookie";
-import cors from "fastify-cors";
 import fastifyJWT from "fastify-jwt";
-import mercurius from "mercurius";
 import authRoutes from "./auth/auth.routes";
-import { loaders, resolvers } from "./resolvers";
+import { resolvers } from "./resolvers";
 import { schema } from "./schema";
 dotenv.config();
 
 const app = Fastify({
   logger: true,
-});
-
-app.register(cors, {
-  origin: "*",
 });
 
 // jwt auth
@@ -49,13 +44,25 @@ app.addHook("onRoute", (routeOptions) => {
   }
 });
 
-app.register(mercurius, {
-  schema: schema,
+const server = new ApolloServer({
+  typeDefs: schema,
   resolvers: resolvers,
-  loaders: loaders,
-  graphiql: true,
-  subscription: true,
+  context: ({ request, reply }) => ({
+    request,
+    reply,
+  }),
+  subscriptions: {
+    path: "/subscriptions",
+  },
 });
+
+// app.register(mercurius, {
+//   schema: schema,
+//   resolvers: resolvers,
+//   loaders: loaders,
+//   graphiql: true,
+//   subscription: true,
+// });
 
 app.setErrorHandler(function (error, _request, reply) {
   console.error(error);
@@ -68,6 +75,12 @@ authRoutes(app);
 // Run the server!
 const start = async () => {
   try {
+    // apollo server startup
+    server.installSubscriptionHandlers(app.server);
+    await server.start();
+    app.register(server.createHandler());
+
+    // fastify server startup
     await app.listen(4000, "0.0.0.0");
     // app.swagger()
     app.log.info(`server listening on 4000`);
