@@ -8,7 +8,7 @@ import { w3cwebsocket } from "websocket";
 import "../styles/globals.css";
 
 const subscriptionClient = new SubscriptionClient(
-  "ws://server:3000/api/ws/subscriptions",
+  "ws://localhost:3000/api/ws/subscriptions",
   {
     reconnect: true,
   },
@@ -16,7 +16,7 @@ const subscriptionClient = new SubscriptionClient(
 );
 
 const client = createClient({
-  url: "http://server:3000/api/proxy/graphql",
+  url: "http://localhost:3000/api/proxy/graphql",
   exchanges: [
     ...defaultExchanges,
     subscriptionExchange({
