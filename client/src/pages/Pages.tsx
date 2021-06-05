@@ -23,7 +23,7 @@ export function findActiveUser(): Promise<User> {
 
 export function logout(): Promise<void> {
   return apiRequest({
-    url: `/api/auth/logout`,
+    url: `/api/proxy/auth/logout`,
     method: "POST",
     body: JSON.stringify({}),
   });
