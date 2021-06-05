@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { ApolloError, gql, useQuery } from "@apollo/client";
 import { Category, Post, Topic } from "../../../../../@types/forum.types";
 import { apiRequest } from "../../../@common/@apiRequest";
 
@@ -9,27 +9,41 @@ export function useFindAllCategories(): {
 } {
   const query = `query { categories { id title description postsCount topics { title } } }`;
   const { data, isLoading, isError } = useQuery("categories", () =>
-    apiRequest<{ data: { categories: Category[] } }>({ url: `/api/graphql?query=${query}`, method: "GET" }),
+    apiRequest<{ data: { categories: Category[] } }>({ url: `/api/proxy/graphql?query=${query}`, method: "GET" }),
   );
   const categories = data?.data.categories || [];
   return { categories, isLoading, isError };
 }
 
 export function useFindCategoryById(categoryId: string): {
-  categoryData: Category;
-  isLoading: boolean;
-  isError: boolean;
+  categoryData: Category | null;
+  loading: boolean;
+  error?: ApolloError;
 } {
-  const query = `query { category(id: "${categoryId}") { id title description topics { id title description posts { id replies { id } } } } }`;
-  const { data, isLoading, isError } = useQuery(
-    ["category", categoryId],
-    () => apiRequest<{ data: { category: Category } }>({ url: `/api/graphql?query=${query}`, method: "GET" }),
-    {
-      enabled: !!categoryId,
-    },
-  );
-  const categoryData = data?.data.category || null;
-  return { categoryData, isLoading, isError };
+  const CATEGORY_QUERY = gql`
+    query Category($categoryId: String!) {
+      category(id: $categoryId) {
+        id
+        title
+        description
+        topics {
+          id
+          title
+          description
+          posts {
+            id
+            replies {
+              id
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const { data, loading, error } = useQuery(CATEGORY_QUERY, { variables: { categoryId }, skip: !categoryId });
+  const categoryData = data?.category || null;
+  return { categoryData, loading, error };
 }
 
 export const apiAddCategory = (category: Category): Promise<Category & { errors: Error[] }> => {
@@ -40,7 +54,7 @@ export const apiAddCategory = (category: Category): Promise<Category & { errors:
     }
   }
   `;
-  return apiRequest({ url: `/api/graphql`, method: "POST", body: JSON.stringify({ query: query }) });
+  return apiRequest({ url: `/api/proxy/graphql`, method: "POST", body: JSON.stringify({ query: query }) });
 };
 
 export function useFindTopicById(topicId: string): {
@@ -67,7 +81,7 @@ export function useFindTopicById(topicId: string): {
   `;
   const { data, isLoading, isError } = useQuery(
     ["topic", topicId],
-    () => apiRequest<{ data: { topic: Topic } }>({ url: `/api/graphql?query=${query}`, method: "GET" }),
+    () => apiRequest<{ data: { topic: Topic } }>({ url: `/api/proxy/graphql?query=${query}`, method: "GET" }),
     {
       enabled: !!topicId,
     },
@@ -84,7 +98,7 @@ export const apiAddTopic = (topic: Topic): Promise<Topic & { errors: Error[] }> 
     }
   }
   `;
-  return apiRequest({ url: `/api/graphql`, method: "POST", body: JSON.stringify({ query: query }) });
+  return apiRequest({ url: `/api/proxy/graphql`, method: "POST", body: JSON.stringify({ query: query }) });
 };
 
 export const apiAddPost = (post: Post): Promise<Post & { errors: Error[] }> => {
@@ -97,5 +111,5 @@ export const apiAddPost = (post: Post): Promise<Post & { errors: Error[] }> => {
     }
   }
   `;
-  return apiRequest({ url: `/api/graphql`, method: "POST", body: JSON.stringify({ query: query }) });
+  return apiRequest({ url: `/api/proxy/graphql`, method: "POST", body: JSON.stringify({ query: query }) });
 };

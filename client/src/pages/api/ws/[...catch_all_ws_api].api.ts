@@ -7,14 +7,14 @@ export const config = {
   },
 };
 
-const proxy = createProxyMiddleware("/api/ws", {
+const proxy = createProxyMiddleware({
   target: "http://localhost:4000",
   ws: true, // proxy websockets
   changeOrigin: true,
-  secure: false,
+  // secure: false,
   logLevel: "debug",
   pathRewrite: {
-    "^/api/ws/": "",
+    "^/api/ws/": "/",
   },
 });
 

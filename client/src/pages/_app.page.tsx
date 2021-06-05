@@ -13,7 +13,7 @@ const httpLink = new HttpLink({
 });
 
 const wsLink = new WebSocketLink({
-  uri: "ws://localhost:3000/api/ws/graphql",
+  uri: "ws://localhost:3000/api/ws/subscriptions",
   options: {
     reconnect: true,
   },

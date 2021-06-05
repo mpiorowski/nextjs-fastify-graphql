@@ -1,11 +1,13 @@
-export const schema = `
+import { gql } from "apollo-server-fastify";
+
+export const schema = gql`
   type Query {
     hello: String
     categories: [Category]
     category(id: String): Category
     topic(id: String): Topic
   }
-  
+
   type Mutation {
     createCategory(title: String, description: String): Category
     createTopic(categoryId: String, title: String, description: String): Topic
@@ -16,7 +18,7 @@ export const schema = `
   type Subscription {
     newestChat: Chat
   }
-  
+
   type Category {
     id: String
     title: String
@@ -49,4 +51,4 @@ export const schema = `
     email: String
     name: String
   }
-  `;
+`;

@@ -20,6 +20,7 @@ const ChatPage = (): ReactElement => {
   // subscription
   const { data, loading } = useSubscription(COMMENTS_SUBSCRIPTION);
 
+  console.log(loading);
   console.log(data);
 
   const [chatList, setChatList] = useState<Chat[]>([]);
@@ -48,6 +49,11 @@ const ChatPage = (): ReactElement => {
       handleError(error);
     }
   };
+
+  // if (loading) {
+  //   return <div>Loading</div>;
+  // }
+
   return (
     <Pages>
       <form onSubmit={handleSubmit(onSubmit)}>

@@ -26,15 +26,13 @@ export default function Categories(): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
 
-  // const { categories } = useFindAllCategories();
-
   const { loading, error, data } = useQuery<{ categories: Category[] }>(CategoriesGQL);
 
-  if (loading) {
-    return <div>Loading</div>;
+  if (error) {
+    return <div>{error}</div>;
   }
 
-  // console.log(categories);
+  const categories = data?.categories || [];
 
   return (
     <Pages>
@@ -55,7 +53,7 @@ export default function Categories(): JSX.Element {
         justifyContent="stretch"
         background="gray.500"
       >
-        {data.categories.map((category) => (
+        {categories.map((category) => (
           <Fragment key={category.id}>
             <Grid h="100px" background="gray.800" alignContent="center">
               <Link href={`/forum/categories/${category.id}/topics`}>
