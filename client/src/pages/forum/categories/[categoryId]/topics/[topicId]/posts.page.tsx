@@ -2,11 +2,11 @@ import { Button, Flex, Grid, useDisclosure } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { Pages } from "../../../../../Pages";
-import { useFindTopicById } from "../../../../@common/categoriesApi";
+import { useFindTopicById } from "../../../../@common/topics.api";
 import PostContent from "./PostContent";
 import { PostDrawer } from "./PostDrawer";
 
-export const Posts = () => {
+export const Posts: React.FC = () => {
   const router = useRouter();
   const { topicId } = router.query;
 
@@ -15,7 +15,7 @@ export const Posts = () => {
 
   const [replyId, setReplyId] = useState<string | null>(null);
 
-  const { topic } = useFindTopicById(topicId as string);
+  const { response } = useFindTopicById(topicId as string);
 
   return (
     <Pages>
@@ -41,7 +41,7 @@ export const Posts = () => {
         paddingTop="0.5"
         paddingBottom="0.5"
       >
-        {topic?.posts.map((post) => (
+        {response?.posts?.map((post) => (
           <PostContent post={post} onOpen={onOpen} setReplyId={() => setReplyId(post.id)} />
         ))}
       </Grid>

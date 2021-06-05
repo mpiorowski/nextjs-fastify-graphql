@@ -4,17 +4,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import React, { Fragment } from "react";
 import { Pages } from "../Pages";
-import { useFindAllCategories } from "./@common/categoriesApi";
+import { useFindAllCategories } from "./@common/categories.api";
 import { CategoryDrawer } from "./CategoryDrawer";
 
 export default function Categories(): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
 
-  const { loading, error, categories, refetch } = useFindAllCategories();
+  const { fetching, error, response } = useFindAllCategories();
 
-  if (loading) {
-    return <div>{loading}</div>;
+  if (fetching) {
+    return <div>{fetching}</div>;
   }
 
   if (error) {
@@ -23,7 +23,7 @@ export default function Categories(): JSX.Element {
 
   return (
     <Pages>
-      <CategoryDrawer btnRef={btnRef} isOpen={isOpen} onClose={onClose} refetch={refetch} />
+      <CategoryDrawer btnRef={btnRef} isOpen={isOpen} onClose={onClose} />
       <Flex justifyContent="right" p="5">
         <Button ref={btnRef} onClick={onOpen} w="200px">
           Dodaj kategorię
@@ -40,7 +40,7 @@ export default function Categories(): JSX.Element {
         justifyContent="stretch"
         background="gray.500"
       >
-        {categories.map((category) => (
+        {response.map((category) => (
           <Fragment key={category.id}>
             <Grid h="100px" background="gray.800" alignContent="center">
               <Link href={`/forum/categories/${category.id}/topics`}>

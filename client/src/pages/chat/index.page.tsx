@@ -1,8 +1,8 @@
-import { gql, useSubscription } from "@apollo/client";
 import { Button, Flex, FormControl, FormErrorMessage, FormLabel, Grid, Textarea } from "@chakra-ui/react";
 import React, { ReactElement, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
+import { gql, useSubscription } from "urql";
 import { Chat } from "../../../../@types/chat.types";
 import { handleError } from "../../@common/@handleError";
 import { Pages } from "../Pages";
@@ -18,16 +18,14 @@ const COMMENTS_SUBSCRIPTION = gql`
 `;
 const ChatPage = (): ReactElement => {
   // subscription
-  const { data, loading } = useSubscription(COMMENTS_SUBSCRIPTION);
-
-  console.log(loading);
-  console.log(data);
+  const [res] = useSubscription({ query: COMMENTS_SUBSCRIPTION });
+  console.log(res.data);
 
   const [chatList, setChatList] = useState<Chat[]>([]);
 
   useEffect(() => {
-    data?.newestChat && setChatList([data.newestChat].concat(chatList));
-  }, [data]);
+    res.data?.newestChat && setChatList([res.data.newestChat].concat(chatList));
+  }, [res.data]);
 
   // form setup
   const {

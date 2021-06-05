@@ -17,16 +17,15 @@ import React, { ReactElement } from "react";
 import { useForm } from "react-hook-form";
 import { Category } from "../../../../@types/forum.types";
 import { handleError } from "../../@common/@handleError";
-import { useAddCategory } from "./@common/categoriesApi";
+import { useAddCategory } from "./@common/categories.api";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   btnRef: React.MutableRefObject<undefined>;
-  refetch: () => void;
 }
 
-export const CategoryDrawer = ({ btnRef, isOpen, onClose, refetch }: Props): ReactElement => {
+export const CategoryDrawer = ({ btnRef, isOpen, onClose }: Props): ReactElement => {
   const {
     handleSubmit,
     register,
@@ -37,11 +36,10 @@ export const CategoryDrawer = ({ btnRef, isOpen, onClose, refetch }: Props): Rea
 
   const onSubmit = async (values: Category) => {
     try {
-      addCategory.mutate({ variables: values });
+      await addCategory.mutate(values);
       if (addCategory?.error) {
         throw addCategory.error;
       }
-      refetch();
       onClose();
     } catch (error) {
       console.error(error);
