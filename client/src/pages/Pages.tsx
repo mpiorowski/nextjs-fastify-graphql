@@ -16,7 +16,7 @@ type Props = {
 
 export function findActiveUser(): Promise<User> {
   return apiRequest({
-    url: `/api/auth/user`,
+    url: `/api/proxy/auth/user`,
     method: "GET",
   });
 }

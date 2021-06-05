@@ -9,10 +9,9 @@ export const config = {
 
 const proxy = createProxyMiddleware({
   target: "http://localhost:4000",
-  ws: true, // proxy websockets
   changeOrigin: true,
   pathRewrite: {
-    "^/api/": "",
+    "^/api/proxy/": "",
   },
 });
 

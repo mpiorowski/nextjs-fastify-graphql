@@ -9,7 +9,7 @@ export const apiGetActiveChat = (): Promise<Chat[] & { errors: Error[] }> => {
     }
   }
   `;
-  return apiRequest({ url: `/api/graphql`, method: "POST", body: JSON.stringify({ query: query }) });
+  return apiRequest({ url: `/api/proxy/graphql`, method: "POST", body: JSON.stringify({ query: query }) });
 };
 
 export const apiAddChat = (chat: Chat): Promise<Chat & { errors: Error[] }> => {
@@ -20,5 +20,5 @@ export const apiAddChat = (chat: Chat): Promise<Chat & { errors: Error[] }> => {
     }
   }
   `;
-  return apiRequest({ url: `/api/graphql`, method: "POST", body: JSON.stringify({ query: query }) });
+  return apiRequest({ url: `/api/proxy/graphql`, method: "POST", body: JSON.stringify({ query: query }) });
 };

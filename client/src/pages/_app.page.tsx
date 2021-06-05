@@ -9,11 +9,11 @@ import { w3cwebsocket } from "websocket";
 import "../styles/globals.css";
 
 const httpLink = new HttpLink({
-  uri: "http://localhost:3000/api/graphql",
+  uri: "http://localhost:3000/api/proxy/graphql",
 });
 
 const wsLink = new WebSocketLink({
-  uri: "ws://localhost:3000/api/graphql",
+  uri: "ws://localhost:3000/api/ws/graphql",
   options: {
     reconnect: true,
   },
