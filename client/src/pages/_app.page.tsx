@@ -1,5 +1,6 @@
 import { ChakraProvider, ColorModeProvider } from "@chakra-ui/react";
 import type { AppProps } from "next/app";
+import Head from "next/head";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { SubscriptionClient } from "subscriptions-transport-ws";
@@ -51,6 +52,11 @@ function MyApp({ Component, pageProps }: AppProps) {
               initialColorMode: "dark",
             }}
           >
+            <Head>
+              <title>NextJs with Fastify</title>
+              <meta property="og:title" content="NextJs with Fastify" key="title" />
+              <meta content="NextJs with Fastify using Graphql" name="description" key="description" />
+            </Head>
             <Component {...pageProps} />
           </ColorModeProvider>
         </ChakraProvider>

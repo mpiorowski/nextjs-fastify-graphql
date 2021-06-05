@@ -1,6 +1,5 @@
-import { gql } from "@apollo/client";
 import { useMemo } from "react";
-import { useMutation, useQuery } from "urql";
+import { gql, useMutation, useQuery } from "urql";
 import { Category } from "../../../../../@types/forum.types";
 import { GraphqlResponse } from "../../../@common/@types";
 
