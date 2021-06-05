@@ -1,9 +1,10 @@
-import { MercuriusContext } from "mercurius";
 import { Pool } from "pg";
 import { Category } from "../../../@types/forum.types";
 
-export async function getAllCategories(context: MercuriusContext): Promise<Category[]> {
-  const user = context.reply.request.user as { id: string };
+export async function getAllCategories(context: any): Promise<Category[]> {
+  console.log("context");
+  const user = context.request.user as { id: string };
+  console.log(user);
   const pool = new Pool();
   const client = await pool.connect();
   try {
@@ -39,8 +40,8 @@ export async function getCategoryById(categoryId: string): Promise<Category[]> {
   }
 }
 
-export async function addCategory(category: Category, context: MercuriusContext): Promise<Category> {
-  const user = context.reply.request.user as { id: string };
+export async function addCategory(category: Category, context: any): Promise<Category> {
+  const user = context.request.user as { id: string };
   const pool = new Pool();
   const client = await pool.connect();
   try {

@@ -1,4 +1,4 @@
-import { IResolvers } from "mercurius";
+import { IResolvers, PubSub } from "apollo-server-fastify";
 import { Chat } from "../../@types/chat.types";
 import { Category, Post, Topic } from "../../@types/forum.types";
 import { addCategory, countAllPostsByCategoryId, getAllCategories, getCategoryById } from "./db/categories.db";
@@ -6,10 +6,12 @@ import { addChat } from "./db/chat.db";
 import { addPost, getAllPostsByTopicId, getAllRepliesByPostId } from "./db/posts.db";
 import { addTopic, getAllTopicsByCategoryId, getTopicById } from "./db/topics.db";
 
+const pubsub = new PubSub();
+
 export const resolvers: IResolvers = {
   Query: {
     hello: () => "Witam",
-    categories: async (_: unknown, _data: null, context) => await getAllCategories(context),
+    categories: async (_parent, _args, context) => await getAllCategories(context),
     category: async (_: unknown, { id }: { id: string }) => await getCategoryById(id),
     topic: async (_: unknown, { id }: { id: string }) => await getTopicById(id),
   },
@@ -19,40 +21,33 @@ export const resolvers: IResolvers = {
     createPost: async (_: unknown, data: Post, context) => await addPost(data, context),
     createChat: async (_: unknown, data: Chat, context) => {
       const response = await addChat(data, context);
-      const { pubsub } = context;
-      pubsub.publish({
-        topic: "LAST_CHAT",
-        payload: {
-          newestChat: response,
-        },
-      });
+      pubsub.publish("LAST_CHAT", { newestChat: response });
       return response;
     },
   },
-  Subscription: {
-    newestChat: {
-      subscribe: async (_root, _args, { pubsub }) => await pubsub.subscribe("LAST_CHAT"),
-    },
-  },
-};
 
-export const loaders = {
   Category: {
-    async topics(queries: { obj: Category }[]): Promise<unknown> {
-      return queries.map(async ({ obj }: { obj: Category }) => await getAllTopicsByCategoryId(obj.id as string));
+    async topics(parent: Category): Promise<unknown> {
+      return await getAllTopicsByCategoryId(parent.id as string);
     },
-    async postsCount(queries: { obj: Category }[]): Promise<unknown> {
-      return queries.map(async ({ obj }: { obj: Category }) => await countAllPostsByCategoryId(obj.id as string));
+    async postsCount(parent: Category): Promise<unknown> {
+      return await countAllPostsByCategoryId(parent.id as string);
     },
   },
   Topic: {
-    async posts(queries: { obj: Topic }[]): Promise<unknown> {
-      return queries.map(async ({ obj }: { obj: Topic }) => await getAllPostsByTopicId(obj.id as string));
+    async posts(parent: Topic): Promise<unknown> {
+      return await getAllPostsByTopicId(parent.id as string);
     },
   },
   Post: {
-    async replies(queries: { obj: Post }[]): Promise<unknown> {
-      return queries.map(async ({ obj }: { obj: Post }) => await getAllRepliesByPostId(obj.id as string));
+    async replies(parent: Post): Promise<unknown> {
+      return await getAllRepliesByPostId(parent.id as string);
+    },
+  },
+
+  Subscription: {
+    newestChat: {
+      subscribe: () => pubsub.asyncIterator(["LAST_CHAT"]),
     },
   },
 };

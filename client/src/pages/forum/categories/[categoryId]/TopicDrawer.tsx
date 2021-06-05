@@ -15,10 +15,10 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "react-query";
-import { handleError } from "../../../../@common/@handleError";
-import { apiAddTopic } from "../../@common/forumApis";
+import { useQueryClient } from "react-query";
 import { Topic } from "../../../../../../@types/forum.types";
+import { handleError } from "../../../../@common/@handleError";
+import { useAddTopic } from "../../@common/topics.api";
 
 interface Props {
   categoryId: string;
@@ -27,7 +27,7 @@ interface Props {
   btnRef: React.MutableRefObject<undefined>;
 }
 
-export const TopicDrawer = ({ categoryId, btnRef, isOpen, onClose }: Props) => {
+export const TopicDrawer: React.FC<Props> = ({ categoryId, btnRef, isOpen, onClose }: Props) => {
   const cache = useQueryClient();
   const {
     handleSubmit,
@@ -35,13 +35,13 @@ export const TopicDrawer = ({ categoryId, btnRef, isOpen, onClose }: Props) => {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  const addTopic = useMutation((topic: Topic) => apiAddTopic(topic));
+  const addTopic = useAddTopic();
   const onSubmit = async (values: Topic) => {
     try {
       const request = { ...values, categoryId: categoryId };
-      const response = await addTopic.mutateAsync(request);
-      if (response?.errors) {
-        throw response.errors;
+      const response = await addTopic.mutate(request);
+      if (response?.error) {
+        throw response.error;
       }
       cache.refetchQueries(["category", categoryId]);
       onClose();
