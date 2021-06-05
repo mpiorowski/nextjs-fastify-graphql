@@ -1,25 +1,14 @@
 import { Button, Flex, FormControl, FormErrorMessage, FormLabel, Grid, Textarea } from "@chakra-ui/react";
 import React, { ReactElement, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useMutation } from "react-query";
-import { gql, useSubscription } from "urql";
 import { Chat } from "../../../../@types/chat.types";
 import { handleError } from "../../@common/@handleError";
 import { Pages } from "../Pages";
-import { apiAddChat } from "./@common/chatApis";
+import { useAddChat, useChatSubscription } from "./@common/chat.api";
 
-const COMMENTS_SUBSCRIPTION = gql`
-  subscription {
-    newestChat {
-      id
-      content
-    }
-  }
-`;
 const ChatPage = (): ReactElement => {
   // subscription
-  const [res] = useSubscription({ query: COMMENTS_SUBSCRIPTION });
-  console.log(res.data);
+  const { res } = useChatSubscription();
 
   const [chatList, setChatList] = useState<Chat[]>([]);
 
@@ -35,13 +24,13 @@ const ChatPage = (): ReactElement => {
   } = useForm();
 
   // add chat mutation
-  const addChat = useMutation((chat: Chat) => apiAddChat(chat));
+  const addChat = useAddChat();
 
   // handle submit
   const onSubmit = async (values: Chat) => {
     try {
-      const response = await addChat.mutateAsync(values);
-      if (response?.errors) throw response.errors;
+      const response = await addChat.mutate(values);
+      if (response?.error) throw response.error;
     } catch (error) {
       console.error(error);
       handleError(error);

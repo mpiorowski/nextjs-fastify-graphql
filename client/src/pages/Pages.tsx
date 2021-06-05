@@ -16,14 +16,14 @@ type Props = {
 
 export function findActiveUser(): Promise<User> {
   return apiRequest({
-    url: `/api/proxy/auth/user`,
+    url: `/auth/user`,
     method: "GET",
   });
 }
 
 export function logout(): Promise<void> {
   return apiRequest({
-    url: `/api/proxy/auth/logout`,
+    url: `/auth/logout`,
     method: "POST",
     body: JSON.stringify({}),
   });

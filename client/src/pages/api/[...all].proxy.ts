@@ -8,10 +8,11 @@ export const config = {
 };
 
 const proxy = createProxyMiddleware({
-  target: "http://server:4000",
+  target: process.env.NODE_ENV === "production" ? "http://server:4000" : "http://localhost:4000",
+  ws: true, // proxy websockets
   changeOrigin: true,
   pathRewrite: {
-    "^/api/proxy/": "",
+    "^/api/": "/",
   },
 });
 

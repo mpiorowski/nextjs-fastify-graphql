@@ -13,14 +13,6 @@ export default function Categories(): JSX.Element {
 
   const { fetching, error, response } = useFindAllCategories();
 
-  if (fetching) {
-    return <div>{fetching}</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
   return (
     <Pages>
       <CategoryDrawer btnRef={btnRef} isOpen={isOpen} onClose={onClose} />
