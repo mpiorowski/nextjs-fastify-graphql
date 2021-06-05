@@ -8,7 +8,7 @@ export const config = {
 };
 
 const proxy = createProxyMiddleware({
-  target: "http://localhost:4000",
+  target: "http://server:4000",
   changeOrigin: true,
   pathRewrite: {
     "^/api/proxy/": "",

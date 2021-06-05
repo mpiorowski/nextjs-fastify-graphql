@@ -8,7 +8,7 @@ export const config = {
 };
 
 const proxy = createProxyMiddleware({
-  target: "http://localhost:4000",
+  target: "http://server:4000",
   ws: true, // proxy websockets
   changeOrigin: true,
   // secure: false,
