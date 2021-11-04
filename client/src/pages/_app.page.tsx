@@ -28,7 +28,7 @@ const client = createClient({
   ],
 });
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   const queryClientRef = React.useRef<QueryClient>();
   if (!queryClientRef.current) {
     queryClientRef.current = new QueryClient({

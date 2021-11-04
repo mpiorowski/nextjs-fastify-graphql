@@ -30,6 +30,7 @@ export const CategoryDrawer = ({ btnRef, isOpen, onClose }: Props): ReactElement
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
+    reset,
   } = useForm();
 
   const addCategory = useAddCategory();
@@ -41,6 +42,7 @@ export const CategoryDrawer = ({ btnRef, isOpen, onClose }: Props): ReactElement
         throw addCategory.error;
       }
       onClose();
+      reset();
     } catch (error) {
       console.error(error);
       handleError(error);
