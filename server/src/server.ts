@@ -64,10 +64,10 @@ const server = new ApolloServer({
 //   subscription: true,
 // });
 
-app.setErrorHandler(function (error, _request, reply) {
-  console.error(error);
-  return reply.status(400).send(error);
-});
+// app.setErrorHandler(function (error, _request, reply) {
+//   console.error(error);
+//   return reply.status(400).send(error);
+// });
 
 // routes
 authRoutes(app);

@@ -1,4 +1,5 @@
 import { Box, Button, Flex, FormControl, FormErrorMessage, FormLabel, Input } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { apiRequest } from "../@common/@apiRequest";
@@ -7,6 +8,7 @@ import { LoadingPage } from "./@common/LoadingPage";
 
 export default function Login(): JSX.Element {
   const [emailSend, setEmailSend] = useState(false);
+  const router = useRouter()
 
   const {
     handleSubmit,
@@ -21,7 +23,11 @@ export default function Login(): JSX.Element {
         method: "POST",
         body: JSON.stringify(values),
       });
-      setEmailSend(true);
+      if(process.env["NODE_ENV"] === "development") {
+        router.push("/");
+      } else {
+        setEmailSend(true);
+      }
       return <LoadingPage></LoadingPage>;
     } catch (error) {
       console.error(error);
