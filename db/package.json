@@ -11,6 +11,6 @@
     "create": "db-migrate create -e pg",
     "migrate": "db-migrate up -e pg",
     "reset": "db-migrate reset -e pg",
-    "start": "docker-compose -f docker-compose.db.yml up"
+    "start": "docker-compose -f docker-compose.db.yml up -d"
   }
 }
